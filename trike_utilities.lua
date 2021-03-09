@@ -217,7 +217,7 @@ function trike.testImpact(self, velocity)
 		end
     end
     if collision then
-        local damage = impact
+        local damage = impact / 2
         self.hp_max = self.hp_max - damage --subtract the impact value directly to hp meter
         local curr_pos = self.object:get_pos()
 
