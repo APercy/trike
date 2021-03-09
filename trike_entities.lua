@@ -421,28 +421,7 @@ minetest.register_entity("trike:trike", {
             end
 
 		    if name == self.driver_name then
-                trike.setText(self)
-
-                self._engine_running = false
-
-			    -- driver clicked the object => driver gets off the vehicle
-			    self.driver_name = nil
-			    -- sound and animation
-                if self.sound_handle then
-                    minetest.sound_stop(self.sound_handle)
-                    self.sound_handle = nil
-                end
-			    
-			    self.engine:set_animation_frame_speed(0)
-
-                -- detach the player
-		        clicker:set_detach()
-		        player_api.player_attached[name] = nil
-		        clicker:set_eye_offset({x=0,y=0,z=0},{x=0,y=0,z=0})
-		        player_api.set_animation(clicker, "stand")
-		        self.driver = nil
-                self.object:set_acceleration(vector.multiply(trike.vector_up, -trike.gravity))
-            
+                trike.detachPlayer(self, clicker)
 		    elseif not self.driver_name then
                 -- no driver => clicker is new driver
                 trike.attach(self, clicker)

@@ -248,6 +248,31 @@ function trike.testImpact(self, velocity)
     end
 end
 
+function trike.detachPlayer(self, player)
+    local name = self.driver_name
+    trike.setText(self)
+
+    self._engine_running = false
+
+    -- driver clicked the object => driver gets off the vehicle
+    self.driver_name = nil
+    -- sound and animation
+    if self.sound_handle then
+        minetest.sound_stop(self.sound_handle)
+        self.sound_handle = nil
+    end
+    
+    self.engine:set_animation_frame_speed(0)
+
+    -- detach the player
+    player:set_detach()
+    player_api.player_attached[name] = nil
+    player:set_eye_offset({x=0,y=0,z=0},{x=0,y=0,z=0})
+    player_api.set_animation(player, "stand")
+    self.driver = nil
+    self.object:set_acceleration(vector.multiply(trike.vector_up, -trike.gravity))
+end
+
 function trike.checkattachBug(self)
     -- for some engine error the player can be detached from the submarine, so lets set him attached again
     local can_stop = true
@@ -255,8 +280,12 @@ function trike.checkattachBug(self)
         -- attach the driver again
         local player = minetest.get_player_by_name(self.owner)
         if player then
-            trike.attach(self, player)
-            can_stop = false
+		    if player:get_hp() > 0 then
+                trike.attach(self, player)
+                can_stop = false
+            else
+                trike.detachPlayer(self, player)
+		    end
         end
     end
 
