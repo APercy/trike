@@ -198,7 +198,7 @@ function trike.testImpact(self, velocity)
     collision = false
     if self.last_vel == nil then return end
     local impact = abs(trike.get_hipotenuse_value(velocity, self.last_vel))
-    if impact > 1 then
+    if impact > 2 then
         --minetest.chat_send_all('impact: '.. impact .. ' - hp: ' .. self.hp_max)
         local p = self.object:get_pos()
 		local nodeu = mobkit.nodeatpos(mobkit.pos_shift(p,{y=1}))
