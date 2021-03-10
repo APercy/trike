@@ -109,6 +109,7 @@ minetest.register_entity("trike:trike", {
 	    selectionbox = {-1, 0, -1, 1, 1, 1},
 	    visual = "mesh",
 	    mesh = "trike_body.b3d",
+        stepheight = 0.5,
         textures = {"trike_black.png", "trike_metal.png", "trike_metal.png", "trike_metal.png",
                     "trike_metal.png", "trike_metal.png", "trike_painting.png", "trike_black.png",
                     "trike_white.png", "trike_black.png", "trike_black.png", "trike_black.png", 
