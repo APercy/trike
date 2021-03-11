@@ -140,6 +140,7 @@ minetest.register_entity("trike:trike", {
             stored_hp = self.hp_max,
             stored_color = self._color,
             stored_power_lever = self._power_lever,
+            stored_driver_name = self.driver_name,
         })
     end,
 
@@ -151,6 +152,7 @@ minetest.register_entity("trike:trike", {
             self.hp_max = data.stored_hp
             self._color = data.stored_color
             self._power_lever = data.stored_power_lever
+            self.driver_name = data.stored_driver_name
             --minetest.debug("loaded: ", self._energy)
         end
         trike.setText(self)
