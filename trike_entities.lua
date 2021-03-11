@@ -291,6 +291,7 @@ minetest.register_entity("trike:trike", {
             --lift calculation
             accel.y = accel_y
 	        local wing_dir = mobkit.rot_to_dir({x=self._angle_of_attack/30,y=newyaw,z=newroll})
+            wing_dir = vector.add(hull_direction, wing_dir)
             combined_acc = trike.getLiftAccel(self, velocity, accel, longit_speed, wing_dir)
             -- end lift
 

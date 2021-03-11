@@ -43,7 +43,7 @@ function trike.getLiftAccel(self, velocity, accel, longit_speed, hull_direction)
         --gliding calcs (to increase speed)
         if not self.isinliquid then --is flying?
             if velocity.y < 0 then
-                local speed = math.abs(velocity.y/2) + 0.75
+                local speed = math.abs(velocity.y/4) + 0.25
                 lift_acc=vector.add(lift_acc,vector.multiply(hull_direction,speed))
             end
         end
