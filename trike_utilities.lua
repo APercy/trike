@@ -20,12 +20,12 @@ end
 function trike.getLiftAccel(self, velocity, accel, longit_speed, hull_direction)
     --lift calculations
     -----------------------------------------------------------
-    local max_height = 1500
+    local max_height = 2500
     
     local retval = accel
     if longit_speed > 1.0 then
         local angle_of_attack = (self._angle_of_attack) / 10
-        local lift = 4.8 --lift 5
+        local lift = 5 --lift 5
         local daoa = deg(angle_of_attack)
 
     	local curr_pos = self.object:get_pos()
