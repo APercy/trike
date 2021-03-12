@@ -48,11 +48,7 @@ function trike.getLiftAccel(self, velocity, accel, longit_speed, hull_direction)
             end
         end
 
-        retval = accel
-        retval.y = retval.y + lift_acc.y
-        retval.x = lift_acc.x + retval.x
-        retval.z = lift_acc.z + retval.z
-        --retval = vector.add(accel,lift_acc)
+        retval = vector.add(accel,lift_acc)
 
     end
     -----------------------------------------------------------

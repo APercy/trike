@@ -132,6 +132,7 @@ minetest.register_entity("trike:trike", {
     _angle_of_attack = 2,
     _power_lever = 0,
     _energy = 0.001,
+    _last_vel = {x=0,y=0,z=0},
 
     get_staticdata = function(self) -- unloaded/unloads ... is now saved
         return minetest.serialize({
@@ -296,7 +297,8 @@ minetest.register_entity("trike:trike", {
             wing_dir = vector.add(hull_direction, wing_dir)
             combined_acc = trike.getLiftAccel(self, velocity, accel, longit_speed, wing_dir)
             -- end lift
-
+          
+            self.object:set_pos(self.object:get_pos()) -- WHY?! Because without it we keep jumping like a popcorn!
     		self.object:set_acceleration(combined_acc)
         end
 
@@ -312,8 +314,8 @@ minetest.register_entity("trike:trike", {
         local climb_angle = trike.get_gauge_angle(climb_rate)
         self.climb_gauge:set_attach(self.object,'',TRIKE_GAUGE_CLIMBER_POSITION,{x=0,y=0,z=climb_angle})
 
-        --saves last velocy for collision detection (abrupt stop)
-        self.last_vel = self.object:get_velocity()
+        --saves last velocity for collision detection (abrupt stop)
+        self._last_vel = self.object:get_velocity()
 	end,
 
 	on_punch = function(self, puncher, ttime, toolcaps, dir, damage)
