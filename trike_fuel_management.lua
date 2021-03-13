@@ -24,7 +24,7 @@ function trike.consumptionCalc(self, accel)
     if self._energy > 0 and self._engine_running and accel ~= nil then
         local zero_reference = vector.new()
         local acceleration = trike.get_hipotenuse_value(accel, zero_reference)
-        local consumed_power = self._power_lever/500000
+        local consumed_power = self._power_lever/700000
         --minetest.chat_send_all('consumed: '.. consumed_power)
         self._energy = self._energy - consumed_power;
 

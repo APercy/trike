@@ -96,7 +96,7 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
                 end
             end
             --do not exceed
-            local max_speed = 6
+            local max_speed = 5
             if longit_speed > max_speed then
                 engineacc = engineacc - (longit_speed-max_speed)
                 if engineacc < 0 then engineacc = 0 end

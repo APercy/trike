@@ -133,6 +133,7 @@ minetest.register_entity("trike:trike", {
     _power_lever = 0,
     _energy = 0.001,
     _last_vel = {x=0,y=0,z=0},
+    _longit_speed = 0,
 
     get_staticdata = function(self) -- unloaded/unloads ... is now saved
         return minetest.serialize({
@@ -218,7 +219,8 @@ minetest.register_entity("trike:trike", {
         local hull_direction = mobkit.rot_to_dir(rotation) --minetest.yaw_to_dir(yaw)
         local nhdir = {x=hull_direction.z,y=0,z=-hull_direction.x}		-- lateral unit vector
 
-        local longit_speed = trike.dot(velocity,hull_direction)
+        local longit_speed = vector.dot(velocity,hull_direction)
+        self._longit_speed = longit_speed
         local longit_drag = vector.multiply(hull_direction,longit_speed*longit_speed*LONGIT_DRAG_FACTOR*-1*trike.sign(longit_speed))
 		local later_speed = trike.dot(velocity,nhdir)
         --minetest.chat_send_all('later_speed: '.. later_speed)
@@ -290,17 +292,17 @@ minetest.register_entity("trike:trike", {
         local power_indicator_angle = trike.get_gauge_angle(self._power_lever/10)
 	    self.power_gauge:set_attach(self.object,'',TRIKE_GAUGE_POWER_POSITION,{x=0,y=0,z=power_indicator_angle})
 
-        if accel ~= nil then
+        --if accel ~= nil then
             --lift calculation
             accel.y = accel_y
-	        local wing_dir = mobkit.rot_to_dir({x=self._angle_of_attack/30,y=newyaw,z=newroll})
+	        local wing_dir = mobkit.rot_to_dir({x=self._angle_of_attack/30,y=yaw,z=roll})
             wing_dir = vector.add(hull_direction, wing_dir)
-            combined_acc = trike.getLiftAccel(self, velocity, accel, longit_speed, wing_dir)
+            new_accel = trike.getLiftAccel(self, velocity, accel, longit_speed, wing_dir)
             -- end lift
-          
-            self.object:set_pos(self.object:get_pos()) -- WHY?! Because without it we keep jumping like a popcorn!
-    		self.object:set_acceleration(combined_acc)
-        end
+
+            self.object:set_pos(self.object:get_pos()) -- WHY?! Because without it we keep jumping like a popcorn!            
+    		self.object:set_acceleration(new_accel)
+        --end
 
 		if newyaw~=yaw or newpitch~=pitch or newroll~=roll then
             self.object:set_rotation({x=newpitch,y=newyaw,z=newroll})

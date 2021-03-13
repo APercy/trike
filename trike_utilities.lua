@@ -25,7 +25,7 @@ function trike.getLiftAccel(self, velocity, accel, longit_speed, hull_direction)
     local retval = accel
     if longit_speed > 1.0 then
         local angle_of_attack = (self._angle_of_attack) / 10
-        local lift = 5 --lift 5
+        local lift = 3 
         local daoa = deg(angle_of_attack)
 
     	local curr_pos = self.object:get_pos()
@@ -33,12 +33,15 @@ function trike.getLiftAccel(self, velocity, accel, longit_speed, hull_direction)
 
 	    local cross = vector.cross(hull_direction,velocity)
 	    local lift_dir = vector.normalize(vector.cross(hull_direction,cross))
+
         local lift_coefficient = (0.24*abs(daoa)*(1/(0.025*daoa+3))^4*math.sign(angle_of_attack))*curr_percent_height
         local lift_val = lift*(vector.length(velocity)^2)*lift_coefficient
 
-        --local lift_acc = vector.multiply(lift_dir,lift_val) --original, but with a lot of interferences in roll
-        local lift_acc = lift_dir
-        lift_acc.y = lift_acc.y * lift_val --multiply only the Y axis for lift
+        local lift_acc = vector.new(0, lift_dir.y, 0)
+        lift_acc = vector.multiply(lift_acc, lift_val)
+        lift_acc.x = lift_dir.x
+        lift_acc.z = lift_dir.z
+        --if lift_acc.y < 0 then return accel end
 
         --gliding calcs (to increase speed)
         if not self.isinliquid then --is flying?
@@ -49,7 +52,6 @@ function trike.getLiftAccel(self, velocity, accel, longit_speed, hull_direction)
         end
 
         retval = vector.add(accel,lift_acc)
-
     end
     -----------------------------------------------------------
     -- end lift
@@ -221,8 +223,8 @@ end
 
 function trike.testImpact(self, velocity)
     collision = false
-    if self.last_vel == nil then return end
-    local impact = abs(trike.get_hipotenuse_value(velocity, self.last_vel))
+    if self._last_vel == nil then return end
+    local impact = abs(trike.get_hipotenuse_value(velocity, self._last_vel))
     if impact > 2 then
         --minetest.chat_send_all('impact: '.. impact .. ' - hp: ' .. self.hp_max)
         local p = self.object:get_pos()
