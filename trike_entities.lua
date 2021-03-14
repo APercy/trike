@@ -292,17 +292,15 @@ minetest.register_entity("trike:trike", {
         local power_indicator_angle = trike.get_gauge_angle(self._power_lever/10)
 	    self.power_gauge:set_attach(self.object,'',TRIKE_GAUGE_POWER_POSITION,{x=0,y=0,z=power_indicator_angle})
 
-        --if accel ~= nil then
-            --lift calculation
-            accel.y = accel_y
-	        local wing_dir = mobkit.rot_to_dir({x=self._angle_of_attack/30,y=yaw,z=roll})
-            wing_dir = vector.add(hull_direction, wing_dir)
-            new_accel = trike.getLiftAccel(self, velocity, accel, longit_speed, wing_dir)
-            -- end lift
+        --lift calculation
+        accel.y = accel_y
+        local wing_dir = mobkit.rot_to_dir({x=self._angle_of_attack/30,y=yaw,z=roll})
+        wing_dir = vector.add(hull_direction, wing_dir)
+        local new_accel = trike.getLiftAccel(self, velocity, accel, longit_speed, wing_dir)
+        -- end lift
 
-            self.object:set_pos(self.object:get_pos()) -- WHY?! Because without it we keep jumping like a popcorn!            
-    		self.object:set_acceleration(new_accel)
-        --end
+        self.object:set_pos(self.object:get_pos()) -- WHY?! Because without it we keep jumping like a popcorn!            
+		self.object:set_acceleration(new_accel)
 
 		if newyaw~=yaw or newpitch~=pitch or newroll~=roll then
             self.object:set_rotation({x=newpitch,y=newyaw,z=newroll})
