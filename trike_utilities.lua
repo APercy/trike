@@ -17,39 +17,48 @@ function trike.minmax(v,m)
 end
 
 --lift
-function trike.getLiftAccel(self, velocity, accel, longit_speed, hull_direction)
+local function pitchroll2pitchyaw(aoa,roll)
+	if roll == 0.0 then return aoa,0 end 
+	-- assumed vector x=0,y=0,z=1
+	local p1 = math.tan(aoa)
+	local y = math.cos(roll)*p1
+	local x = math.sqrt(p1^2-y^2)
+	local pitch = math.atan(y)
+	local yaw=math.atan(x)*math.sign(roll)
+	return pitch,yaw
+end
+
+function trike.getLiftAccel(self, velocity, accel, longit_speed, roll)
     --lift calculations
     -----------------------------------------------------------
     local max_height = 2500
     
     local retval = accel
     if longit_speed > 1.0 then
-        local angle_of_attack = (self._angle_of_attack) / 10
-        local lift = 3 
+        local angle_of_attack = math.rad(self._angle_of_attack)
+        local lift = 14
+        local acc = 0.8
         local daoa = deg(angle_of_attack)
 
     	local curr_pos = self.object:get_pos()
         local curr_percent_height = (100 - ((curr_pos.y * 100) / max_height))/100 --to decrease the lift coefficient at hight altitudes
 
-	    local cross = vector.cross(hull_direction,velocity)
-	    local lift_dir = vector.normalize(vector.cross(hull_direction,cross))
+	    local rotation=self.object:get_rotation()
+	    local vrot = mobkit.dir_to_rot(velocity,rotation)
+	    
+	    hpitch,hyaw = pitchroll2pitchyaw(angle_of_attack,roll)
 
-        local lift_coefficient = (0.24*abs(daoa)*(1/(0.025*daoa+3))^4*math.sign(angle_of_attack))*curr_percent_height
-        local lift_val = lift*(vector.length(velocity)^2)*lift_coefficient
+	    local hrot = {x=vrot.x+hpitch,y=vrot.y-hyaw,z=roll}
+	    local hdir = mobkit.rot_to_dir(hrot) --(hrot)
+	    local cross = vector.cross(velocity,hdir)
+	    local lift_dir = vector.normalize(vector.cross(cross,hdir))	
 
-        local lift_acc = vector.new(0, lift_dir.y, 0)
-        lift_acc = vector.multiply(lift_acc, lift_val)
-        lift_acc.x = lift_dir.x
-        lift_acc.z = lift_dir.z
-        --if lift_acc.y < 0 then return accel end
+        local lift_coefficient = (0.24*abs(daoa)*(1/(0.025*daoa+3))^4*math.sign(angle_of_attack))
+        local lift_val = (lift*(vector.length(velocity)^2)*lift_coefficient)*curr_percent_height
+        --minetest.chat_send_all('lift: '.. lift_val)
 
-        --gliding calcs (to increase speed)
-        if not self.isinliquid then --is flying?
-            if velocity.y < 0 then
-                local speed = math.abs(velocity.y/4) + 0.25
-                lift_acc=vector.add(lift_acc,vector.multiply(hull_direction,speed))
-            end
-        end
+        local lift_acc = vector.multiply(lift_dir,lift_val)
+        lift_acc=vector.add(vector.multiply(minetest.yaw_to_dir(rotation.y),acc),lift_acc)
 
         retval = vector.add(accel,lift_acc)
     end

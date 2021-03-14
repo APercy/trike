@@ -61,7 +61,7 @@ function trike.physics(self)
 	else
 --		self.isinliquid = false
         if self._longit_speed > 1 then
-		    self.object:set_acceleration({x=0,y=mobkit.gravity/2,z=0})
+		    self.object:set_acceleration({x=0,y=mobkit.gravity,z=0})
         else
             self.object:set_acceleration({x=0,y=mobkit.gravity,z=0})
         end

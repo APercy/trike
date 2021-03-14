@@ -96,7 +96,7 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
                 end
             end
             --do not exceed
-            local max_speed = 5
+            local max_speed = 6
             if longit_speed > max_speed then
                 engineacc = engineacc - (longit_speed-max_speed)
                 if engineacc < 0 then engineacc = 0 end
@@ -118,7 +118,7 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
         --wing
         local wing_limit = 10
 		if ctrl.down then
-			self._angle_of_attack = math.max(self._angle_of_attack-10*dtime,1)
+			self._angle_of_attack = math.max(self._angle_of_attack-10*dtime,2)
 		elseif ctrl.up then
 			self._angle_of_attack = math.min(self._angle_of_attack+10*dtime,wing_limit)
 		end

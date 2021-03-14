@@ -134,6 +134,7 @@ minetest.register_entity("trike:trike", {
     _energy = 0.001,
     _last_vel = {x=0,y=0,z=0},
     _longit_speed = 0,
+    _lastrot = {x=0,y=0,z=0},
 
     get_staticdata = function(self) -- unloaded/unloads ... is now saved
         return minetest.serialize({
@@ -294,9 +295,7 @@ minetest.register_entity("trike:trike", {
 
         --lift calculation
         accel.y = accel_y
-        local wing_dir = mobkit.rot_to_dir({x=self._angle_of_attack/30,y=yaw,z=roll})
-        wing_dir = vector.add(hull_direction, wing_dir)
-        local new_accel = trike.getLiftAccel(self, velocity, accel, longit_speed, wing_dir)
+        local new_accel = trike.getLiftAccel(self, velocity, accel, longit_speed, roll)
         -- end lift
 
         self.object:set_pos(self.object:get_pos()) -- WHY?! Because without it we keep jumping like a popcorn!            
