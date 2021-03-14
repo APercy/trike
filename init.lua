@@ -1,4 +1,5 @@
 trike={}
+trike.fuel = nil
 trike.gravity = tonumber(minetest.settings:get("movement_gravity")) or 9.8
 
 trike.colors ={
@@ -19,6 +20,7 @@ trike.colors ={
     yellow='#ffe400',
 }
 
+dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_global_definitions.lua")
 dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_crafts.lua")
 dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_control.lua")
 dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_fuel_management.lua")
@@ -49,4 +51,14 @@ minetest.register_privilege("flight_licence", {
     give_to_singleplayer = true
 })
 
-
+minetest.register_on_mods_loaded(function()
+    for name,def in pairs(minetest.registered_items) do
+        minetest.chat_send_all(name)
+        if (name == 'biofuel:biofuel') then
+            trike.fuel = 'biofuel:biofuel'
+        end
+    end
+    if trike.fuel == nil then
+        trike.fuel = 'biofuel:bottle_fuel'
+    end
+end)

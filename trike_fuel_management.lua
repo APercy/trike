@@ -2,10 +2,13 @@ function trike.loadFuel(self, player_name)
     if self._energy < 9.5 then 
         local player = minetest.get_player_by_name(player_name)
         local inv = player:get_inventory()
-        local inventory_fuel = "biofuel:biofuel"
 
-        if inv:contains_item("main", inventory_fuel) then
-            local stack = ItemStack(inventory_fuel .. " 1")
+        local stack = nil
+        if inv:contains_item("main", trike.fuel) then
+            stack = ItemStack(trike.fuel .. " 1")
+        end
+
+        if stack then
             local taken = inv:remove_item("main", stack)
 
 	        self._energy = self._energy + 1

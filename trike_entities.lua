@@ -342,8 +342,7 @@ minetest.register_entity("trike:trike", {
         if itmstck then item_name = itmstck:get_name() end
 
         if is_attached == false then
-
-            if item_name == "biofuel:biofuel" and self._engine_running == false and self.owner == name then
+            if item_name == trike.fuel and self._engine_running == false then
                 --refuel
                 trike.loadFuel(self, puncher:get_player_name())
                 return
@@ -383,7 +382,7 @@ minetest.register_entity("trike:trike", {
                     -- end painting
 
 			    else -- deal damage
-				    if not self.driver and toolcaps and toolcaps.damage_groups and toolcaps.damage_groups.fleshy and item_name ~= "biofuel:biofuel" then
+				    if not self.driver and toolcaps and toolcaps.damage_groups and toolcaps.damage_groups.fleshy and item_name ~= trike.fuel then
 					    --mobkit.hurt(self,toolcaps.damage_groups.fleshy - 1)
 					    --mobkit.make_sound(self,'hit')
                         self.hp_max = self.hp_max - 10
