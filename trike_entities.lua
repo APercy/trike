@@ -295,7 +295,10 @@ minetest.register_entity("trike:trike", {
 
         --lift calculation
         accel.y = accel_y
-        local new_accel = trike.getLiftAccel(self, velocity, accel, longit_speed, roll)
+        local new_accel = accel
+        if longit_speed > 2 then
+            new_accel = trike.getLiftAccel(self, velocity, accel, longit_speed, roll)
+        end
         -- end lift
 
         self.object:set_pos(self.object:get_pos()) -- WHY?! Because without it we keep jumping like a popcorn!            
