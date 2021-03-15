@@ -427,6 +427,8 @@ minetest.register_entity("trike:trike", {
 		    if name == self.driver_name then
                 trike.detachPlayer(self, clicker)
 		    elseif not self.driver_name then
+                local is_under_water = trike.check_is_under_water(self.object)
+                if is_under_water then return end
                 -- no driver => clicker is new driver
                 trike.attach(self, clicker)
 		    end

@@ -185,12 +185,11 @@ function trike.destroy(self)
     self.object:remove()
 
     pos.y=pos.y+2
-    for i=1,4 do
-	    minetest.add_item({x=pos.x+math.random()-0.5,y=pos.y,z=pos.z+math.random()-0.5},'wool:white')
-    end
+    minetest.add_item({x=pos.x+math.random()-0.5,y=pos.y,z=pos.z+math.random()-0.5},'trike:wing')
 
     for i=1,6 do
 	    minetest.add_item({x=pos.x+math.random()-0.5,y=pos.y,z=pos.z+math.random()-0.5},'default:mese_crystal')
+        minetest.add_item({x=pos.x+math.random()-0.5,y=pos.y,z=pos.z+math.random()-0.5},'default:diamond')
     end
 
     for i=1,3 do
@@ -308,3 +307,13 @@ function trike.checkattachBug(self)
         end
     end
 end
+
+function trike.check_is_under_water(obj)
+	local pos_up = obj:get_pos()
+	pos_up.y = pos_up.y + 0.1
+	local node_up = minetest.get_node(pos_up).name
+	local nodedef = minetest.registered_nodes[node_up]
+	local liquid_up = nodedef.liquidtype ~= "none"
+	return liquid_up
+end
+
