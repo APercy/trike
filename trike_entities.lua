@@ -301,8 +301,9 @@ minetest.register_entity("trike:trike", {
         end
         -- end lift
 
-        self.object:set_pos(self.object:get_pos()) -- WHY?! Because without it we keep jumping like a popcorn!            
+           
 		self.object:set_acceleration(new_accel)
+        self.object:set_pos(self.object:get_pos()) -- WHY?! Because without it we keep jumping like a popcorn!
 
 		if newyaw~=yaw or newpitch~=pitch or newroll~=roll then
             self.object:set_rotation({x=newpitch,y=newyaw,z=newroll})
