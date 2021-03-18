@@ -60,11 +60,7 @@ function trike.physics(self)
 			{x=-vel.x*self.water_drag,y=buoyacc-vel.y*abs(vel.y)*0.4,z=-vel.z*self.water_drag})
 	else
 --		self.isinliquid = false
-        if self._longit_speed > 1 then
-		    self.object:set_acceleration({x=0,y=mobkit.gravity,z=0})
-        else
-            self.object:set_acceleration({x=0,y=mobkit.gravity,z=0})
-        end
+	    self.object:set_acceleration({x=0,y=mobkit.gravity,z=0})
 	end
 
 end
