@@ -198,10 +198,10 @@ function trike.destroy(self)
 
     --minetest.add_item({x=pos.x+math.random()-0.5,y=pos.y,z=pos.z+math.random()-0.5},'trike:trike')
 
-    local total_biofuel = math.floor(self._energy) - 1
-    for i=0,total_biofuel do
-        minetest.add_item({x=pos.x+math.random()-0.5,y=pos.y,z=pos.z+math.random()-0.5},trike.fuel)
-    end
+    --local total_biofuel = math.floor(self._energy) - 1
+    --for i=0,total_biofuel do
+        --minetest.add_item({x=pos.x+math.random()-0.5,y=pos.y,z=pos.z+math.random()-0.5},'biofuel:biofuel')
+    --end
 end
 
 function trike.check_node_below(obj)

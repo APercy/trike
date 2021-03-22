@@ -1,5 +1,5 @@
 trike={}
-trike.fuel = nil
+trike.fuel = {['biofuel:biofuel'] = 1,['biofuel:bottle_fuel'] = 1,['biofuel:phial_fuel'] = 0.25, ['biofuel:fuel_can'] = 10}
 trike.gravity = tonumber(minetest.settings:get("movement_gravity")) or 9.8
 
 trike.colors ={
@@ -51,14 +51,3 @@ minetest.register_privilege("flight_licence", {
     give_to_singleplayer = true
 })
 
-minetest.register_on_mods_loaded(function()
-    for name,def in pairs(minetest.registered_items) do
-        minetest.chat_send_all(name)
-        if (name == 'biofuel:biofuel') then
-            trike.fuel = 'biofuel:biofuel'
-        end
-    end
-    if trike.fuel == nil then
-        trike.fuel = 'biofuel:bottle_fuel'
-    end
-end)

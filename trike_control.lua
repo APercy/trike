@@ -16,7 +16,7 @@ function trike.check_node_below(obj)
 end
 
 function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel)
-    trike.trike_last_time_command = trike.trike_last_time_command + dtime
+    trike.trike_last_time_command = trike.trike_last_time_command + self.dtime
     if trike.trike_last_time_command > 1 then trike.trike_last_time_command = 1 end
     if self.driver_name == nil then return end
 	local player = minetest.get_player_by_name(self.driver_name)
@@ -118,16 +118,16 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
         --wing
         local wing_limit = 10
 		if ctrl.down then
-			self._angle_of_attack = math.max(self._angle_of_attack-10*dtime,2)
+			self._angle_of_attack = math.max(self._angle_of_attack-10*self.dtime,2)
 		elseif ctrl.up then
-			self._angle_of_attack = math.min(self._angle_of_attack+10*dtime,wing_limit)
+			self._angle_of_attack = math.min(self._angle_of_attack+10*self.dtime,wing_limit)
 		end
 
 		-- yaw
 		if ctrl.right then
-			self._rudder_angle = math.max(self._rudder_angle-30*dtime,-rudder_limit)
+			self._rudder_angle = math.max(self._rudder_angle-30*self.dtime,-rudder_limit)
 		elseif ctrl.left then
-			self._rudder_angle = math.min(self._rudder_angle+30*dtime,rudder_limit)
+			self._rudder_angle = math.min(self._rudder_angle+30*self.dtime,rudder_limit)
 		end
 	end
 

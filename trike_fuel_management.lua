@@ -1,25 +1,38 @@
-function trike.loadFuel(self, player_name)
-    if self._energy < 9.5 then 
-        local player = minetest.get_player_by_name(player_name)
-        local inv = player:get_inventory()
-
-        local stack = nil
-        if inv:contains_item("main", trike.fuel) then
-            stack = ItemStack(trike.fuel .. " 1")
+function trike.contains(table, val)
+    for k,v in pairs(table) do
+        if k == val then
+            return v
         end
+    end
+    return false
+end
 
-        if stack then
+function trike.loadFuel(self, player_name)
+    local player = minetest.get_player_by_name(player_name)
+    local inv = player:get_inventory()
+
+    local itmstck=player:get_wielded_item()
+    local item_name = ""
+    if itmstck then item_name = itmstck:get_name() end
+
+    local stack = nil
+    local fuel = trike.contains(trike.fuel, item_name)
+    if fuel then
+        stack = ItemStack(item_name .. " 1")
+
+        if self._energy < 10 then
             local taken = inv:remove_item("main", stack)
-
-	        self._energy = self._energy + 1
+            self._energy = self._energy + fuel
             if self._energy > 10 then self._energy = 10 end
 
             local energy_indicator_angle = trike.get_gauge_angle(self._energy)
             self.fuel_gauge:set_attach(self.object,'',TRIKE_GAUGE_FUEL_POSITION,{x=0,y=0,z=energy_indicator_angle})
-	    end
-    else
-        print("Full tank.")
+        end
+        
+        return true
     end
+
+    return false
 end
 
 function trike.consumptionCalc(self, accel)

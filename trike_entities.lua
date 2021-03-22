@@ -232,7 +232,7 @@ minetest.register_entity("trike:trike", {
 
 		if is_attached then
             --control
-			accel = trike.control(self, dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel) or vel
+			accel = trike.control(self, self.dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel) or vel
         else
             -- for some engine error the player can be detached from the machine, so lets set him attached again
             trike.checkattachBug(self)
@@ -346,9 +346,7 @@ minetest.register_entity("trike:trike", {
         if itmstck then item_name = itmstck:get_name() end
 
         if is_attached == false then
-            if item_name == trike.fuel and self._engine_running == false then
-                --refuel
-                trike.loadFuel(self, puncher:get_player_name())
+            if trike.loadFuel(self, puncher:get_player_name()) then
                 return
             end
 
