@@ -198,9 +198,20 @@ function trike.destroy(self)
         self.sound_handle = nil
     end
 
+    if self._passenger then
+        -- detach the passenger
+        local passenger = minetest.get_player_by_name(self._passenger)
+        passenger:set_detach()
+        passenger:set_eye_offset({x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
+        player_api.player_attached[self._passenger] = nil
+        -- player should stand again
+        player_api.set_animation(passenger, "stand")
+        self._passenger = nil
+    end
+
     if self.driver_name then
+        -- detach the driver
         local player = minetest.get_player_by_name(self.driver_name)
-        -- detach the driver first (puncher must be driver)
         player:set_detach()
         player:set_eye_offset({x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
         player_api.player_attached[self.driver_name] = nil
@@ -312,6 +323,10 @@ function trike.testImpact(self, velocity)
             local player = minetest.get_player_by_name(player_name)
 		    if player:get_hp() > 0 then
 			    player:set_hp(player:get_hp()-(damage/2))
+		    end
+            local passenger = minetest.get_player_by_name(self._passenger)
+		    if passenger:get_hp() > 0 then
+			    passenger:set_hp(passenger:get_hp()-(damage/2))
 		    end
         end
 
