@@ -201,11 +201,13 @@ function trike.destroy(self)
     if self._passenger then
         -- detach the passenger
         local passenger = minetest.get_player_by_name(self._passenger)
-        passenger:set_detach()
-        passenger:set_eye_offset({x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
-        player_api.player_attached[self._passenger] = nil
-        -- player should stand again
-        player_api.set_animation(passenger, "stand")
+        if passenger then 
+            passenger:set_detach()
+            passenger:set_eye_offset({x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
+            player_api.player_attached[self._passenger] = nil
+            -- player should stand again
+            player_api.set_animation(passenger, "stand")
+        end
         self._passenger = nil
     end
 
@@ -326,9 +328,11 @@ function trike.testImpact(self, velocity)
 		    end
             if self._passenger ~= nil then
                 local passenger = minetest.get_player_by_name(self._passenger)
-		        if passenger:get_hp() > 0 then
-			        passenger:set_hp(passenger:get_hp()-(damage/2))
-		        end
+                if passenger then
+		            if passenger:get_hp() > 0 then
+			            passenger:set_hp(passenger:get_hp()-(damage/2))
+		            end
+                end
             end
         end
 
