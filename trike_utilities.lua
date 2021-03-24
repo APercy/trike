@@ -80,13 +80,9 @@ function trike.attach(self, player)
     local name = player:get_player_name()
     self.driver_name = name
 
-    -- temporary------
-    self.hp = 50 -- why? cause I can desist from destroy
-    ------------------
-
     -- attach the driver
-    player:set_attach(self.object, "", {x = 0, y = 9, z = 2}, {x = 0, y = 0, z = 0})
-    player:set_eye_offset({x = 0, y = 3, z = 3}, {x = 0, y = 3, z = 10})
+    player:set_attach(self.object, "", {x = 0, y = 7, z = 7.5}, {x = 0, y = 0, z = 0})
+    player:set_eye_offset({x = 0, y = 1, z = 7}, {x = 0, y = 1, z = 7})
     player_api.player_attached[name] = true
     -- make the driver sit
     minetest.after(0.2, function()
@@ -97,6 +93,24 @@ function trike.attach(self, player)
     end)
     -- disable gravity
     self.object:set_acceleration(vector.new())
+end
+
+-- attach player
+function trike.attach_pax(self, player)
+    local name = player:get_player_name()
+    self._passenger = name
+
+    -- attach the driver
+    player:set_attach(self.object, "", {x = 0, y = 9, z = 1.8}, {x = 0, y = 0, z = 0})
+    player:set_eye_offset({x = 0, y = 7, z = 2}, {x = 0, y = 3, z = -30})
+    player_api.player_attached[name] = true
+    -- make the driver sit
+    minetest.after(0.2, function()
+        local player = minetest.get_player_by_name(name)
+        if player then
+	        player_api.set_animation(player, "sit")
+        end
+    end)
 end
 
 function trike.detachPlayer(self, player)
@@ -122,6 +136,27 @@ function trike.detachPlayer(self, player)
     player_api.set_animation(player, "stand")
     self.driver = nil
     self.object:set_acceleration(vector.multiply(trike.vector_up, -trike.gravity))
+end
+
+function trike.detach_pax(self, player)
+    local name = self._passenger
+    trike.setText(self)
+
+    -- passenger clicked the object => driver gets off the vehicle
+    self._passenger = nil
+    -- sound and animation
+    if self.sound_handle then
+        minetest.sound_stop(self.sound_handle)
+        self.sound_handle = nil
+    end
+    
+    self.engine:set_animation_frame_speed(0)
+
+    -- detach the player
+    player:set_detach()
+    player_api.player_attached[name] = nil
+    player:set_eye_offset({x=0,y=0,z=0},{x=0,y=0,z=0})
+    player_api.set_animation(player, "stand")
 end
 
 function trike.checkAttach(self)

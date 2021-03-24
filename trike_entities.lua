@@ -106,7 +106,7 @@ minetest.register_entity("trike:trike", {
 	    physical = true,
         collide_with_objects = true,
 	    collisionbox = {-1.2, 0.0, -1.2, 1.2, 3, 1.2}, --{-1,0,-1, 1,0.3,1},
-	    selectionbox = {-1, 0, -1, 1, 1, 1},
+	    selectionbox = {-2, 0, -2, 2, 1, 2},
 	    visual = "mesh",
 	    mesh = "trike_body.b3d",
         stepheight = 0.5,
@@ -124,6 +124,7 @@ minetest.register_entity("trike:trike", {
     hp_max = 50,
     buoyancy = 2,
     physics = trike.physics,
+    _passenger = nil,
     _color = "#0063b0",
     _rudder_angle = 0,
     _angle_of_attack = 0,
@@ -415,32 +416,44 @@ minetest.register_entity("trike:trike", {
 
         local name = clicker:get_player_name()
 
-        local can_access = true
-        if trike.restricted == "true" then
-            can_access = minetest.check_player_privs(clicker, {flight_licence=true})
+        if self.owner == "" then
+            self.owner = name
         end
 
-        if can_access then
-            if self.owner and self.owner ~= name and self.owner ~= "" then return end
-            if self.owner == "" then
-                self.owner = name
+        if self.owner == name then
+            -- pilot section
+            local can_access = true
+            if trike.restricted == "true" then
+                can_access = minetest.check_player_privs(clicker, {flight_licence=true})
             end
-
-		    if name == self.driver_name then
-                trike.detachPlayer(self, clicker)
-		    elseif not self.driver_name then
-                local is_under_water = trike.check_is_under_water(self.object)
-                if is_under_water then return end
-                -- no driver => clicker is new driver
-                trike.attach(self, clicker)
-		    end
+            if can_access then
+	            if name == self.driver_name then
+                    trike.detachPlayer(self, clicker)
+	            elseif not self.driver_name then
+                    local is_under_water = trike.check_is_under_water(self.object)
+                    if is_under_water then return end
+                    -- no driver => clicker is new driver
+                    trike.attach(self, clicker)
+	            end
+            else
+                minetest.show_formspec(name, "trike:flightlicence",
+                    "size[4,2]" ..
+                    "label[0.0,0.0;Sorry ...]"..
+                    "label[0.0,0.7;You need a flight licence to fly it.]" ..
+                    "label[0.0,1.0;You must obtain it from server admin.]" ..
+                    "button_exit[1.5,1.9;0.9,0.1;e;Exit]")
+            end
+            -- end pilot section
         else
-            minetest.show_formspec(name, "trike:flightlicence",
-                "size[4,2]" ..
-                "label[0.0,0.0;Sorry ...]"..
-                "label[0.0,0.7;You need a flight licence to fly it.]" ..
-                "label[0.0,1.0;You must obtain it from server admin.]" ..
-                "button_exit[1.5,1.9;0.9,0.1;e;Exit]")
+            --passenger section
+            --only can enter when the pilot is inside
+            if self.driver_name then
+                if self._passenger == nil then
+                    trike.attach_pax(self, clicker)
+                else
+                    trike.detach_pax(self, clicker)
+                end
+            end
         end
 	end,
 })
