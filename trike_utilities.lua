@@ -324,10 +324,12 @@ function trike.testImpact(self, velocity)
 		    if player:get_hp() > 0 then
 			    player:set_hp(player:get_hp()-(damage/2))
 		    end
-            local passenger = minetest.get_player_by_name(self._passenger)
-		    if passenger:get_hp() > 0 then
-			    passenger:set_hp(passenger:get_hp()-(damage/2))
-		    end
+            if self._passenger ~= nil then
+                local passenger = minetest.get_player_by_name(self._passenger)
+		        if passenger:get_hp() > 0 then
+			        passenger:set_hp(passenger:get_hp()-(damage/2))
+		        end
+            end
         end
 
     end
