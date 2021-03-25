@@ -81,7 +81,7 @@ function trike.attach(self, player)
     self.driver_name = name
 
     -- attach the driver
-    player:set_attach(self.object, "", {x = 0, y = 7, z = 7.5}, {x = 0, y = 0, z = 0})
+    player:set_attach(self.object, "", {x = 0, y = 7, z = 8}, {x = 0, y = 0, z = 0})
     player:set_eye_offset({x = 0, y = 1, z = 7}, {x = 0, y = 1, z = 7})
     player_api.player_attached[name] = true
     -- make the driver sit
@@ -101,7 +101,7 @@ function trike.attach_pax(self, player)
     self._passenger = name
 
     -- attach the driver
-    player:set_attach(self.object, "", {x = 0, y = 9, z = 1.8}, {x = 0, y = 0, z = 0})
+    player:set_attach(self.object, "", {x = 0, y = 9, z = 1.6}, {x = 0, y = 0, z = 0})
     player:set_eye_offset({x = 0, y = 7, z = 2}, {x = 0, y = 3, z = -30})
     player_api.player_attached[name] = true
     -- make the driver sit
