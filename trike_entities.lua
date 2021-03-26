@@ -459,6 +459,10 @@ minetest.register_entity("trike:trike", {
                 else
                     trike.detach_pax(self, clicker)
                 end
+            else
+                if self._passenger then
+                    trike.detach_pax(self, clicker)
+                end
             end
         end
 	end,
