@@ -81,8 +81,8 @@ function trike.attach(self, player)
     self.driver_name = name
 
     -- attach the driver
-    player:set_attach(self.object, "", {x = 0, y = 7, z = 8}, {x = 0, y = 0, z = 0})
-    player:set_eye_offset({x = 0, y = 1, z = 7}, {x = 0, y = 1, z = 7})
+    player:set_attach(self.pilot_seat_base, "", {x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
+    player:set_eye_offset({x = 0, y = -6, z = 2}, {x = 0, y = 1, z = -30})
     player_api.player_attached[name] = true
     -- make the driver sit
     minetest.after(0.2, function()
@@ -95,14 +95,14 @@ function trike.attach(self, player)
     self.object:set_acceleration(vector.new())
 end
 
--- attach player
+-- attach passenger
 function trike.attach_pax(self, player)
     local name = player:get_player_name()
     self._passenger = name
 
     -- attach the driver
-    player:set_attach(self.object, "", {x = 0, y = 9, z = 1.6}, {x = 0, y = 0, z = 0})
-    player:set_eye_offset({x = 0, y = 7, z = 2}, {x = 0, y = 3, z = -30})
+    player:set_attach(self.passenger_seat_base, "", {x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
+    player:set_eye_offset({x = 0, y = -3, z = 3}, {x = 0, y = 3, z = -30})
     player_api.player_attached[name] = true
     -- make the driver sit
     minetest.after(0.2, function()
@@ -166,7 +166,7 @@ function trike.checkAttach(self)
         if player then
             local player_attach = player:get_attach()
             if player_attach then
-                if player_attach == self.object then
+                if player_attach == self.pilot_seat_base then
                     return true
                 end
             end
@@ -229,6 +229,8 @@ function trike.destroy(self)
     if self.engine then self.engine:remove() end
     if self.wing then self.wing:remove() end
     if self.wheel then self.wheel:remove() end
+    if self.pilot_seat_base then self.pilot_seat_base:remove() end
+    if self.passenger_seat_base then self.passenger_seat_base:remove() end
 
     self.object:remove()
 

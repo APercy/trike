@@ -101,6 +101,31 @@ initial_properties = {
     end,
 })
 
+--
+-- seat pivot
+--
+minetest.register_entity('trike:seat_base',{
+initial_properties = {
+	physical = false,
+	collide_with_objects=false,
+	pointable=false,
+	visual = "mesh",
+	mesh = "trike_seat_base.b3d",
+    textures = {"trike_black.png",},
+	},
+	
+    on_activate = function(self,std)
+	    self.sdata = minetest.deserialize(std) or {}
+	    if self.sdata.remove then self.object:remove() end
+    end,
+	    
+    get_staticdata=function(self)
+      self.sdata.remove=true
+      return minetest.serialize(self.sdata)
+    end,
+	
+})
+
 minetest.register_entity("trike:trike", {
 	initial_properties = {
 	    physical = true,
@@ -195,6 +220,14 @@ minetest.register_entity("trike:trike", {
         local climb_angle = trike.get_gauge_angle(0)
 	    climb_gauge:set_attach(self.object,'',TRIKE_GAUGE_CLIMBER_POSITION,{x=0,y=0,z=climb_angle})
 	    self.climb_gauge = climb_gauge
+
+        local pilot_seat_base=minetest.add_entity(pos,'trike:seat_base')
+        pilot_seat_base:set_attach(self.object,'',{x=0,y=7,z=8},{x=0,y=0,z=0})
+	    self.pilot_seat_base = pilot_seat_base
+
+        local passenger_seat_base=minetest.add_entity(pos,'trike:seat_base')
+        passenger_seat_base:set_attach(self.object,'',{x=0,y=9,z=1.6},{x=0,y=0,z=0})
+	    self.passenger_seat_base = passenger_seat_base
 
         trike.paint(self, self.object, self._color, "trike_painting.png")
         trike.paint(self, self.wing, self._color, "trike_wing_color.png")
@@ -302,8 +335,20 @@ minetest.register_entity("trike:trike", {
         end
         -- end lift
 
-           
-		self.object:set_acceleration(new_accel)
+		--[[if self._passenger then
+            local passenger = minetest.get_player_by_name(self._passenger)
+            if passenger then
+                passenger:set_acceleration(new_accel)
+            end
+        end
+        if self.driver_name then
+            local pilot = minetest.get_player_by_name(self.driver_name)
+            if pilot then
+                pilot:set_acceleration(new_accel)
+            end
+        end]]--
+
+        self.object:set_acceleration(new_accel)
         self.object:set_pos(self.object:get_pos()) -- WHY?! Because without it we keep jumping like a popcorn!
 
 		if newyaw~=yaw or newpitch~=pitch or newroll~=roll then
