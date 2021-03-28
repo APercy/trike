@@ -104,10 +104,11 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
             self._acceleration = engineacc
         else
 	        local paddleacc
-	        if longit_speed < 1.0 and ctrl.jump then
-		        paddleacc = 0.5
-	        elseif longit_speed > -1.0 and ctrl.sneak then
-		        paddleacc = -0.5
+	        if longit_speed < 1.0 then
+                if ctrl.jump then paddleacc = 0.5 end
+            end
+	        if longit_speed > -1.0 then
+                if ctrl.sneak then paddleacc = -0.5 end
 	        end
 	        self._acceleration = paddleacc
         end
