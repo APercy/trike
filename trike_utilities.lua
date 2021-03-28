@@ -140,7 +140,6 @@ end
 
 function trike.detach_pax(self, player)
     local name = self._passenger
-    trike.setText(self)
 
     -- passenger clicked the object => driver gets off the vehicle
     self._passenger = nil
