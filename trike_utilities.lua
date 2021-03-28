@@ -113,7 +113,7 @@ function trike.attach_pax(self, player)
     end)
 end
 
-function trike.detachPlayer(self, player)
+function trike.dettachPlayer(self, player)
     local name = self.driver_name
     trike.setText(self)
 
@@ -138,7 +138,7 @@ function trike.detachPlayer(self, player)
     self.object:set_acceleration(vector.multiply(trike.vector_up, -trike.gravity))
 end
 
-function trike.detach_pax(self, player)
+function trike.dettach_pax(self, player)
     local name = self._passenger
 
     -- passenger clicked the object => driver gets off the vehicle
@@ -346,7 +346,7 @@ function trike.checkattachBug(self)
                 trike.attach(self, player)
                 can_stop = false
             else
-                trike.detachPlayer(self, player)
+                trike.dettachPlayer(self, player)
 		    end
         end
     end

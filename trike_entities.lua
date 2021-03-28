@@ -473,12 +473,12 @@ minetest.register_entity("trike:trike", {
             end
             if can_access then
 	            if name == self.driver_name then
-                    trike.detachPlayer(self, clicker)
+                    trike.dettachPlayer(self, clicker)
                     -- eject passenger if the plane is on ground
                     local touching_ground, liquid_below = trike.check_node_below(self.object)
                     if self.isinliquid or touching_ground and self._passenger ~= nil then --isn't flying?
                         local passenger = minetest.get_player_by_name(self._passenger)
-                        trike.detach_pax(self, passenger)
+                        trike.dettach_pax(self, passenger)
                     end
 	            elseif not self.driver_name then
                     local is_under_water = trike.check_is_under_water(self.object)
@@ -502,11 +502,11 @@ minetest.register_entity("trike:trike", {
                 if self._passenger == nil then
                     trike.attach_pax(self, clicker)
                 else
-                    trike.detach_pax(self, clicker)
+                    trike.dettach_pax(self, clicker)
                 end
             else
                 if self._passenger then
-                    trike.detach_pax(self, clicker)
+                    trike.dettach_pax(self, clicker)
                 end
             end
         end
