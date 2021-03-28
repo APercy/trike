@@ -144,13 +144,6 @@ function trike.detach_pax(self, player)
 
     -- passenger clicked the object => driver gets off the vehicle
     self._passenger = nil
-    -- sound and animation
-    if self.sound_handle then
-        minetest.sound_stop(self.sound_handle)
-        self.sound_handle = nil
-    end
-    
-    self.engine:set_animation_frame_speed(0)
 
     -- detach the player
     player:set_detach()
