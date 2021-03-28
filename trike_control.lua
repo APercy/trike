@@ -78,15 +78,15 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
                     if self._power_lever < 0 then self._power_lever = 0 end
                 end
                 if self._power_lever <= 0 then
-                    --wheel break
+                    --break
                     if longit_speed >= 0.1 then
-	                    engineacc = -1
+                        engineacc = -1
                     end
                     if longit_speed <= -0.1 then
-	                    engineacc = 1
+                        engineacc = 1
                     end
                     if abs(longit_speed) < 0.1 then
-	                    self.object:set_velocity(vector.new())
+                        self.object:set_velocity(vector.new())
                     end
                 else
                     --sound

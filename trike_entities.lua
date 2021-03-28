@@ -240,7 +240,7 @@ minetest.register_entity("trike:trike", {
 
 	on_step = function(self, dtime)
         mobkit.stepfunc(self, dtime)
-
+        
         local accel_y = self.object:get_acceleration().y
         local rotation = self.object:get_rotation()
         local yaw = rotation.y
@@ -266,7 +266,7 @@ minetest.register_entity("trike:trike", {
 
 		if is_attached then
             --control
-			accel = trike.control(self, self.dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel) or vel
+			accel = trike.control(self, self.dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel, touching_ground) or vel
         else
             -- for some engine error the player can be detached from the machine, so lets set him attached again
             trike.checkattachBug(self)
@@ -298,7 +298,6 @@ minetest.register_entity("trike:trike", {
 
         -- adjust pitch by velocity
         local touching_ground, liquid_below = trike.check_node_below(self.object)
-        --self.isinliquid or 
         if touching_ground then --isn't flying?
             if newpitch < 0 then newpitch = 0 end
 
@@ -335,21 +334,10 @@ minetest.register_entity("trike:trike", {
         end
         -- end lift
 
-		--[[if self._passenger then
-            local passenger = minetest.get_player_by_name(self._passenger)
-            if passenger then
-                passenger:set_acceleration(new_accel)
-            end
-        end
-        if self.driver_name then
-            local pilot = minetest.get_player_by_name(self.driver_name)
-            if pilot then
-                pilot:set_acceleration(new_accel)
-            end
-        end]]--
-
         self.object:set_acceleration(new_accel)
-        self.object:set_pos(self.object:get_pos()) -- WHY?! Because without it we keep jumping like a popcorn!
+        local acceleration = self.object:get_acceleration() --this avoids glitches
+        local new_velocity = vector.multiply(acceleration, self.dtime)
+        self.object:add_velocity(new_velocity)
 
 		if newyaw~=yaw or newpitch~=pitch or newroll~=roll then
             self.object:set_rotation({x=newpitch,y=newyaw,z=newroll})
