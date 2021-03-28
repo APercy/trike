@@ -331,7 +331,7 @@ minetest.register_entity("trike:trike", {
         accel.y = accel_y
         local new_accel = accel
         if longit_speed > 2 then
-            new_accel = trike.getLiftAccel(self, velocity, accel, longit_speed, roll)
+            new_accel = trike.getLiftAccel(self, velocity, new_accel, longit_speed, roll)
         end
         -- end lift
 
@@ -476,9 +476,11 @@ minetest.register_entity("trike:trike", {
                     trike.dettachPlayer(self, clicker)
                     -- eject passenger if the plane is on ground
                     local touching_ground, liquid_below = trike.check_node_below(self.object)
-                    if self.isinliquid or touching_ground and self._passenger ~= nil then --isn't flying?
-                        local passenger = minetest.get_player_by_name(self._passenger)
-                        trike.dettach_pax(self, passenger)
+                    if self.isinliquid or touching_ground then --isn't flying?
+                        if self._passenger then
+                            local passenger = minetest.get_player_by_name(self._passenger)
+                            trike.dettach_pax(self, passenger)
+                        end
                     end
 	            elseif not self.driver_name then
                     local is_under_water = trike.check_is_under_water(self.object)

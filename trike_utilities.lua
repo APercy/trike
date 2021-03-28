@@ -60,7 +60,7 @@ function trike.getLiftAccel(self, velocity, accel, longit_speed, roll)
         local lift_acc = vector.multiply(lift_dir,lift_val)
         lift_acc=vector.add(vector.multiply(minetest.yaw_to_dir(rotation.y),acc),lift_acc)
 
-        retval = vector.add(accel,lift_acc)
+        retval = vector.add(retval,lift_acc)
     end
     -----------------------------------------------------------
     -- end lift

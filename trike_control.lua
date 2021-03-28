@@ -1,6 +1,7 @@
 --global constants
 trike.trike_last_time_command = 0
 trike.vector_up = vector.new(0, 1, 0)
+trike.max_engine_acc = 3.5
 
 dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_utilities.lua")
 
@@ -28,6 +29,7 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
 	if player then
 		local ctrl = player:get_player_control()
 
+        --engine and power control
         if ctrl.aux1 and trike.trike_last_time_command > 0.3 then
             trike.trike_last_time_command = 0
 		    if self._engine_running then
@@ -38,7 +40,6 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
                     self.sound_handle = nil
                 end
 		        self.engine:set_animation_frame_speed(0)
-
 		    elseif self._engine_running == false and self._energy > 0 then
 			    self._engine_running = true
 	            -- sound and animation
@@ -51,24 +52,23 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
         self._acceleration = 0
         if self._engine_running then
             local engineacc = 0
-
-            --compute the acceleration
-            local max_engine_acc = 3.5
             --engine acceleration calc
-            engineacc = (self._power_lever * max_engine_acc) / 100;
+            engineacc = (self._power_lever * trike.max_engine_acc) / 100;
             self.engine:set_animation_frame_speed(60 + self._power_lever)
 
             --increase power lever
-            if self._power_lever < 100 and ctrl.jump then
-                self._power_lever = self._power_lever + 1
+            if ctrl.jump then
+                if self._power_lever < 100 then
+                    self._power_lever = self._power_lever + 1
+                end
                 if self._power_lever > 100 then
                     self._power_lever = 100
-                    engineacc = max_engine_acc
+                    engineacc = trike.max_engine_acc
                 else
                     --sound
                     minetest.sound_stop(self.sound_handle)
                     self.sound_handle = minetest.sound_play({name = "engine"},
-		                {object = self.object, gain = 2.0, pitch = 0.5 + ((self._power_lever/100)/2),max_hear_distance = 32, loop = true,})
+	                    {object = self.object, gain = 2.0, pitch = 0.5 + ((self._power_lever/100)/2),max_hear_distance = 32, loop = true,})
                 end
             end
             --decrease power lever
@@ -103,7 +103,7 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
             end
             self._acceleration = engineacc
         else
-	        local paddleacc
+	        local paddleacc = 0
 	        if longit_speed < 1.0 then
                 if ctrl.jump then paddleacc = 0.5 end
             end
@@ -114,7 +114,7 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
         end
 
         local hull_acc = vector.multiply(hull_direction,self._acceleration)
-        retval_accel=vector.add(accel,hull_acc)
+        retval_accel=vector.add(retval_accel,hull_acc)
 
         --wing
         local wing_limit = 10
