@@ -336,6 +336,7 @@ minetest.register_entity("trike:trike", {
 
         self.object:set_acceleration(new_accel)
         local acceleration = self.object:get_acceleration() --this avoids glitches
+        self.object:set_pos(self.object:get_pos())
         local new_velocity = vector.multiply(acceleration, self.dtime)
         self.object:add_velocity(new_velocity)
 
