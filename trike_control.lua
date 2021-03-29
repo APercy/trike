@@ -16,11 +16,10 @@ function trike.check_node_below(obj)
 	return touching_ground, liquid_below
 end
 
-function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel)
+function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel, player)
     trike.trike_last_time_command = trike.trike_last_time_command + self.dtime
     if trike.trike_last_time_command > 1 then trike.trike_last_time_command = 1 end
     if self.driver_name == nil then return end
-	local player = minetest.get_player_by_name(self.driver_name)
     local retval_accel = accel
 
     local rudder_limit = 30    

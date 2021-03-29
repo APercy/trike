@@ -261,12 +261,17 @@ minetest.register_entity("trike:trike", {
         --minetest.chat_send_all('later_speed: '.. later_speed)
 		local later_drag = vector.multiply(nhdir,later_speed*later_speed*LATER_DRAG_FACTOR*-1*trike.sign(later_speed))
         local accel = vector.add(longit_drag,later_drag)
+        local curr_pos = self.object:get_pos()
+        --self.object:set_pos(curr_pos)
 
-        local is_attached = trike.checkAttach(self)
+        local player = nil
+        if self.driver_name then player = minetest.get_player_by_name(self.driver_name) end
+
+        local is_attached = trike.checkAttach(self, player)
 
 		if is_attached then
             --control
-			accel = trike.control(self, self.dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel, touching_ground) or vel
+			accel = trike.control(self, self.dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel, player) or vel
         else
             -- for some engine error the player can be detached from the machine, so lets set him attached again
             trike.checkattachBug(self)
@@ -297,8 +302,11 @@ minetest.register_entity("trike:trike", {
         newpitch = self._angle_of_attack/200 --(velocity.y * math.rad(6))
 
         -- adjust pitch by velocity
-        local touching_ground, liquid_below = trike.check_node_below(self.object)
-        if touching_ground then --isn't flying?
+        local node_bellow = mobkit.nodeatpos(mobkit.pos_shift(curr_pos,{y=-1}))
+        local is_flying = true
+        if node_bellow and node_bellow.drawtype ~= 'airlike' then is_flying = false end
+
+        if is_flying == false then --isn't flying?
             if newpitch < 0 then newpitch = 0 end
 
             local min_speed = 4
@@ -330,19 +338,18 @@ minetest.register_entity("trike:trike", {
         accel.y = accel_y
         local new_accel = accel
         if longit_speed > 2 then
-            new_accel = trike.getLiftAccel(self, velocity, new_accel, longit_speed, roll)
+            new_accel = trike.getLiftAccel(self, velocity, new_accel, longit_speed, roll, curr_pos)
         end
         -- end lift
-
-        self.object:set_acceleration(new_accel)
-        local acceleration = self.object:get_acceleration() --this avoids glitches
-        self.object:set_pos(self.object:get_pos())
-        local new_velocity = vector.multiply(acceleration, self.dtime)
-        self.object:add_velocity(new_velocity)
 
 		if newyaw~=yaw or newpitch~=pitch or newroll~=roll then
             self.object:set_rotation({x=newpitch,y=newyaw,z=newroll})
         end
+
+        self.object:set_acceleration(new_accel)
+        curr_pos = self.object:get_pos()
+        self.object:set_pos(curr_pos)
+
 
         --adjust climb indicator
         local climb_rate = velocity.y * 1.5

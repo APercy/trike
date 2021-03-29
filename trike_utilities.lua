@@ -28,7 +28,7 @@ local function pitchroll2pitchyaw(aoa,roll)
 	return pitch,yaw
 end
 
-function trike.getLiftAccel(self, velocity, accel, longit_speed, roll)
+function trike.getLiftAccel(self, velocity, accel, longit_speed, roll, curr_pos)
     --lift calculations
     -----------------------------------------------------------
     local max_height = 2500
@@ -40,7 +40,7 @@ function trike.getLiftAccel(self, velocity, accel, longit_speed, roll)
         local acc = 0.8
         local daoa = deg(angle_of_attack)
 
-    	local curr_pos = self.object:get_pos()
+    	--local curr_pos = self.object:get_pos()
         local curr_percent_height = (100 - ((curr_pos.y * 100) / max_height))/100 --to decrease the lift coefficient at hight altitudes
 
 	    local rotation=self.object:get_rotation()
@@ -151,16 +151,12 @@ function trike.dettach_pax(self, player)
     player_api.set_animation(player, "stand")
 end
 
-function trike.checkAttach(self)
-    if self.owner then
-        local player = minetest.get_player_by_name(self.owner)
-        
-        if player then
-            local player_attach = player:get_attach()
-            if player_attach then
-                if player_attach == self.pilot_seat_base then
-                    return true
-                end
+function trike.checkAttach(self, player)
+    if player then
+        local player_attach = player:get_attach()
+        if player_attach then
+            if player_attach == self.pilot_seat_base then
+                return true
             end
         end
     end
