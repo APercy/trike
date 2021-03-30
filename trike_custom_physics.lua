@@ -36,7 +36,7 @@ function trike.physics(self)
 		self.object:set_velocity(vnew)
 	end
 	
-	-- buoyancy
+	--[[ buoyancy
 	local surface = nil
 	local surfnodename = nil
 	local spos = mobkit.get_stand_pos(self)
@@ -62,6 +62,7 @@ function trike.physics(self)
 	else
 --		self.isinliquid = false
 	    self.object:set_acceleration({x=0,y=mobkit.gravity,z=0})
-	end
+	end]]--
+    self.object:set_acceleration({x=0,y=mobkit.gravity,z=0})
 
 end

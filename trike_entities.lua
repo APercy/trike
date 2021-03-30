@@ -174,6 +174,7 @@ minetest.register_entity("trike:trike", {
     end,
 
 	on_activate = function(self, staticdata, dtime_s)
+        mobkit.actfunc(self, staticdata, dtime_s)
         if staticdata ~= "" and staticdata ~= nil then
             local data = minetest.deserialize(staticdata) or {}
             self._energy = data.stored_energy
@@ -233,9 +234,6 @@ minetest.register_entity("trike:trike", {
         trike.paint(self, self.wing, self._color, "trike_wing_color.png")
 
 		self.object:set_armor_groups({immortal=1})
-
-        mobkit.actfunc(self, staticdata, dtime_s)
-
 	end,
 
 	on_step = function(self, dtime)
@@ -252,6 +250,7 @@ minetest.register_entity("trike:trike", {
 
         local velocity = self.object:get_velocity()
         local curr_pos = self.object:get_pos()
+        --self.object:set_pos(curr_pos)
         local hull_direction = mobkit.rot_to_dir(rotation) --minetest.yaw_to_dir(yaw)
         local nhdir = {x=hull_direction.z,y=0,z=-hull_direction.x}		-- lateral unit vector
 
@@ -351,8 +350,6 @@ minetest.register_entity("trike:trike", {
         if stop ~= true then
             --self.object:set_velocity(vector.add(vector.multiply(new_accel, dtime),velocity))
             self.object:set_acceleration(new_accel)
-            if player then player:set_velocity({x=0,y=0,z=0}) end
-            if passenger then passenger:set_velocity({x=0,y=0,z=0}) end
             --self.object:set_pos(self.object:get_pos())
         elseif stop == false then
             self.object:set_velocity({x=0,y=0,z=0})

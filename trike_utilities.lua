@@ -16,6 +16,31 @@ function trike.minmax(v,m)
 	return math.min(math.abs(v),m)*trike.sign(v)
 end
 
+local physics_attrs = {"jump", "speed", "gravity"}
+local function apply_physics_override(player, overrides)
+    if player_monoids then
+        for _, attr in pairs(physics_attrs) do
+            if overrides[attr] then
+                player_monoids[attr]:add_change(player, overrides[attr], "hangglider:glider")
+            end
+        end
+    else
+        player:set_physics_override(overrides)
+    end
+end
+
+local function remove_physics_override(player, overrides)
+    for _, attr in pairs(physics_attrs) do
+        if overrides[attr] then
+            if core.global_exists("player_monoids") then
+                player_monoids[attr]:del_change(player, "hangglider:glider")
+            else
+                player:set_physics_override({[attr] = 1})
+            end
+        end
+    end
+end
+
 --lift
 local function pitchroll2pitchyaw(aoa,roll)
 	if roll == 0.0 then return aoa,0 end 
@@ -89,10 +114,9 @@ function trike.attach(self, player)
         local player = minetest.get_player_by_name(name)
         if player then
 	        player_api.set_animation(player, "sit")
+            apply_physics_override(player, {speed=0,gravity=0,jump=0})
         end
     end)
-    -- disable gravity
-    self.object:set_acceleration(vector.new())
 end
 
 -- attach passenger
@@ -109,6 +133,7 @@ function trike.attach_pax(self, player)
         local player = minetest.get_player_by_name(name)
         if player then
 	        player_api.set_animation(player, "sit")
+            apply_physics_override(player, {speed=0,gravity=0,jump=0})
         end
     end)
 end
@@ -135,7 +160,7 @@ function trike.dettachPlayer(self, player)
     player:set_eye_offset({x=0,y=0,z=0},{x=0,y=0,z=0})
     player_api.set_animation(player, "stand")
     self.driver = nil
-    self.object:set_acceleration(vector.multiply(trike.vector_up, -trike.gravity))
+    remove_physics_override(player, {speed=1,gravity=1,jump=1})
 end
 
 function trike.dettach_pax(self, player)
@@ -149,6 +174,7 @@ function trike.dettach_pax(self, player)
     player_api.player_attached[name] = nil
     player_api.set_animation(player, "stand")
     player:set_eye_offset({x=0,y=0,z=0},{x=0,y=0,z=0})
+    remove_physics_override(player, {speed=1,gravity=1,jump=1})
 end
 
 function trike.checkAttach(self, player)
