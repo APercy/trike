@@ -251,6 +251,8 @@ minetest.register_entity("trike:trike", {
 		local newroll=roll
 
         local velocity = self.object:get_velocity()
+        local curr_pos = self.object:get_pos()
+        self.object:set_pos(curr_pos)
         local hull_direction = mobkit.rot_to_dir(rotation) --minetest.yaw_to_dir(yaw)
         local nhdir = {x=hull_direction.z,y=0,z=-hull_direction.x}		-- lateral unit vector
 
@@ -261,7 +263,7 @@ minetest.register_entity("trike:trike", {
         --minetest.chat_send_all('later_speed: '.. later_speed)
 		local later_drag = vector.multiply(nhdir,later_speed*later_speed*LATER_DRAG_FACTOR*-1*trike.sign(later_speed))
         local accel = vector.add(longit_drag,later_drag)
-        local curr_pos = self.object:get_pos()
+        local stop = false
         --self.object:set_pos(curr_pos)
 
         local player = nil
@@ -271,7 +273,7 @@ minetest.register_entity("trike:trike", {
 
 		if is_attached then
             --control
-			accel = trike.control(self, self.dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel, player) or vel
+			accel, stop = trike.control(self, self.dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel, player) or vel
         else
             -- for some engine error the player can be detached from the machine, so lets set him attached again
             trike.checkattachBug(self)
@@ -346,10 +348,12 @@ minetest.register_entity("trike:trike", {
             self.object:set_rotation({x=newpitch,y=newyaw,z=newroll})
         end
 
-        self.object:set_acceleration(new_accel)
-        curr_pos = self.object:get_pos()
-        self.object:set_pos(curr_pos)
-
+        if stop ~= true then
+            self.object:set_velocity(vector.add(vector.multiply(new_accel, dtime),velocity))
+            self.object:set_acceleration(new_accel)
+        elseif stop == false then
+            self.object:set_velocity({x=0,y=0,z=0})
+        end
 
         --adjust climb indicator
         local climb_rate = velocity.y * 1.5

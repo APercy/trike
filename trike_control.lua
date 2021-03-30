@@ -23,6 +23,7 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
     local retval_accel = accel
 
     local rudder_limit = 30    
+    local stop = false
 
 	-- player control
 	if player then
@@ -85,7 +86,7 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
                         engineacc = 1
                     end
                     if abs(longit_speed) < 0.1 then
-                        self.object:set_velocity(vector.new())
+                        stop = true
                     end
                 else
                     --sound
@@ -138,7 +139,7 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
         self._rudder_angle = self._rudder_angle + correction
     end
 
-    return retval_accel
+    return retval_accel, stop
 end
 
 
