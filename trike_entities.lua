@@ -252,7 +252,6 @@ minetest.register_entity("trike:trike", {
 
         local velocity = self.object:get_velocity()
         local curr_pos = self.object:get_pos()
-        self.object:set_pos(curr_pos)
         local hull_direction = mobkit.rot_to_dir(rotation) --minetest.yaw_to_dir(yaw)
         local nhdir = {x=hull_direction.z,y=0,z=-hull_direction.x}		-- lateral unit vector
 
@@ -264,10 +263,11 @@ minetest.register_entity("trike:trike", {
 		local later_drag = vector.multiply(nhdir,later_speed*later_speed*LATER_DRAG_FACTOR*-1*trike.sign(later_speed))
         local accel = vector.add(longit_drag,later_drag)
         local stop = false
-        --self.object:set_pos(curr_pos)
 
         local player = nil
         if self.driver_name then player = minetest.get_player_by_name(self.driver_name) end
+        local passenger = nil
+        if self._passenger then passenger = minetest.get_player_by_name(self._passenger) end
 
         local is_attached = trike.checkAttach(self, player)
 
@@ -351,6 +351,9 @@ minetest.register_entity("trike:trike", {
         if stop ~= true then
             --self.object:set_velocity(vector.add(vector.multiply(new_accel, dtime),velocity))
             self.object:set_acceleration(new_accel)
+            if player then player:set_velocity({x=0,y=0,z=0}) end
+            if passenger then passenger:set_velocity({x=0,y=0,z=0}) end
+            --self.object:set_pos(self.object:get_pos())
         elseif stop == false then
             self.object:set_velocity({x=0,y=0,z=0})
         end
