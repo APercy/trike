@@ -349,7 +349,7 @@ minetest.register_entity("trike:trike", {
         end
 
         if stop ~= true then
-            self.object:set_velocity(vector.add(vector.multiply(new_accel, dtime),velocity))
+            --self.object:set_velocity(vector.add(vector.multiply(new_accel, dtime),velocity))
             self.object:set_acceleration(new_accel)
         elseif stop == false then
             self.object:set_velocity({x=0,y=0,z=0})
