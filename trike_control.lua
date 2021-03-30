@@ -1,7 +1,7 @@
 --global constants
 trike.trike_last_time_command = 0
 trike.vector_up = vector.new(0, 1, 0)
-trike.max_engine_acc = 3.5
+trike.max_engine_acc = 4.5
 
 dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_utilities.lua")
 

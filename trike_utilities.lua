@@ -37,7 +37,7 @@ function trike.getLiftAccel(self, velocity, accel, longit_speed, roll, curr_pos)
     if longit_speed > 1.0 then
         local angle_of_attack = math.rad(self._angle_of_attack)
         local lift = 14
-        local acc = 0.8
+        --local acc = 0.8
         local daoa = deg(angle_of_attack)
 
     	--local curr_pos = self.object:get_pos()
@@ -58,7 +58,7 @@ function trike.getLiftAccel(self, velocity, accel, longit_speed, roll, curr_pos)
         --minetest.chat_send_all('lift: '.. lift_val)
 
         local lift_acc = vector.multiply(lift_dir,lift_val)
-        lift_acc=vector.add(vector.multiply(minetest.yaw_to_dir(rotation.y),acc),lift_acc)
+        --lift_acc=vector.add(vector.multiply(minetest.yaw_to_dir(rotation.y),acc),lift_acc)
 
         retval = vector.add(retval,lift_acc)
     end
@@ -147,8 +147,8 @@ function trike.dettach_pax(self, player)
     -- detach the player
     player:set_detach()
     player_api.player_attached[name] = nil
-    player:set_eye_offset({x=0,y=0,z=0},{x=0,y=0,z=0})
     player_api.set_animation(player, "stand")
+    player:set_eye_offset({x=0,y=0,z=0},{x=0,y=0,z=0})
 end
 
 function trike.checkAttach(self, player)
