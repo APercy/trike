@@ -249,8 +249,6 @@ minetest.register_entity("trike:trike", {
 		local newroll=roll
 
         local velocity = self.object:get_velocity()
-        local curr_pos = self.object:get_pos()
-        --self.object:set_pos(curr_pos)
         local hull_direction = mobkit.rot_to_dir(rotation) --minetest.yaw_to_dir(yaw)
         local nhdir = {x=hull_direction.z,y=0,z=-hull_direction.x}		-- lateral unit vector
 
@@ -298,6 +296,9 @@ minetest.register_entity("trike:trike", {
         --minetest.chat_send_all('newroll: '.. newroll)
         ---------------------------------
         -- end roll
+
+        local curr_pos = self.object:get_pos()
+        self.object:set_pos(curr_pos)
 
         -- pitch
         newpitch = self._angle_of_attack/200 --(velocity.y * math.rad(6))
@@ -348,7 +349,7 @@ minetest.register_entity("trike:trike", {
         end
 
         if stop ~= true then
-            --self.object:set_velocity(vector.add(vector.multiply(new_accel, dtime),velocity))
+            self.object:set_velocity(velocity)
             self.object:set_acceleration(new_accel)
             --self.object:set_pos(self.object:get_pos())
         elseif stop == false then
