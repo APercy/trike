@@ -266,11 +266,18 @@ minetest.register_entity("trike:trike", {
         local passenger = nil
         if self._passenger then passenger = minetest.get_player_by_name(self._passenger) end
 
+        local curr_pos = self.object:get_pos()
+        self.object:set_pos(curr_pos)
+
+        local node_bellow = mobkit.nodeatpos(mobkit.pos_shift(curr_pos,{y=-1}))
+        local is_flying = true
+        if node_bellow and node_bellow.drawtype ~= 'airlike' then is_flying = false end
+
         local is_attached = trike.checkAttach(self, player)
 
 		if is_attached then
             --control
-			accel, stop = trike.control(self, self.dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel, player) or vel
+			accel, stop = trike.control(self, self.dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel, player, is_flying) or vel
         else
             -- for some engine error the player can be detached from the machine, so lets set him attached again
             trike.checkattachBug(self)
@@ -297,17 +304,10 @@ minetest.register_entity("trike:trike", {
         ---------------------------------
         -- end roll
 
-        local curr_pos = self.object:get_pos()
-        self.object:set_pos(curr_pos)
-
         -- pitch
         newpitch = self._angle_of_attack/200 --(velocity.y * math.rad(6))
 
         -- adjust pitch by velocity
-        local node_bellow = mobkit.nodeatpos(mobkit.pos_shift(curr_pos,{y=-1}))
-        local is_flying = true
-        if node_bellow and node_bellow.drawtype ~= 'airlike' then is_flying = false end
-
         if is_flying == false then --isn't flying?
             if newpitch < 0 then newpitch = 0 end
 

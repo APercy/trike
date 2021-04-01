@@ -16,7 +16,7 @@ function trike.check_node_below(obj)
 	return touching_ground, liquid_below
 end
 
-function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel, player)
+function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel, player, is_flying)
     trike.trike_last_time_command = trike.trike_last_time_command + self.dtime
     if trike.trike_last_time_command > 1 then trike.trike_last_time_command = 1 end
     if self.driver_name == nil then return end
@@ -77,7 +77,7 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
                     self._power_lever = self._power_lever - 1
                     if self._power_lever < 0 then self._power_lever = 0 end
                 end
-                if self._power_lever <= 0 then
+                if self._power_lever <= 0 and is_flying == false then
                     --break
                     if longit_speed >= 0.1 then
                         engineacc = -1
