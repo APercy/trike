@@ -198,7 +198,6 @@ minetest.register_entity("trike:trike", {
 
 	    local wing=minetest.add_entity(pos,'trike:wing')
 	    wing:set_attach(self.object,'',{x=0,y=29,z=0},{x=0,y=0,z=0})
-		-- set the animation once and later only change the speed
 	    self.wing = wing
 
 	    local wheel=minetest.add_entity(pos,'trike:front_wheel')

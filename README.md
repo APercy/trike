@@ -18,7 +18,7 @@ Adjust to the maximum. Push the wing (W) and wait for speed to lift.
 
 During the cruise flight, it is ideal to keep the power setting below the red range,
 to control fuel consumption. Use the climb indicator to stabilize altitude,
-as at high altitudes you lose support and you spend more fuel. 
+as at high altitudes you lose lift and you spend more fuel. 
 
 For landing, a traffic circuit can be made, lowering the power and increasing 
 the angle of attack of the wing to reduce speed and altitude (acting as a flap). 
