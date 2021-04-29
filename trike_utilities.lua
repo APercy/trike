@@ -114,7 +114,7 @@ function trike.attach(self, player)
         local player = minetest.get_player_by_name(name)
         if player then
 	        player_api.set_animation(player, "sit")
-            apply_physics_override(player, {speed=0,gravity=0,jump=0})
+            --apply_physics_override(player, {speed=0,gravity=0,jump=0})
         end
     end)
 end
@@ -133,7 +133,7 @@ function trike.attach_pax(self, player)
         local player = minetest.get_player_by_name(name)
         if player then
 	        player_api.set_animation(player, "sit")
-            apply_physics_override(player, {speed=0,gravity=0,jump=0})
+            --apply_physics_override(player, {speed=0,gravity=0,jump=0})
         end
     end)
 end
@@ -160,7 +160,7 @@ function trike.dettachPlayer(self, player)
     player:set_eye_offset({x=0,y=0,z=0},{x=0,y=0,z=0})
     player_api.set_animation(player, "stand")
     self.driver = nil
-    remove_physics_override(player, {speed=1,gravity=1,jump=1})
+    --remove_physics_override(player, {speed=1,gravity=1,jump=1})
 end
 
 function trike.dettach_pax(self, player)
@@ -174,7 +174,7 @@ function trike.dettach_pax(self, player)
     player_api.player_attached[name] = nil
     player_api.set_animation(player, "stand")
     player:set_eye_offset({x=0,y=0,z=0},{x=0,y=0,z=0})
-    remove_physics_override(player, {speed=1,gravity=1,jump=1})
+    --remove_physics_override(player, {speed=1,gravity=1,jump=1})
 end
 
 function trike.checkAttach(self, player)
@@ -216,24 +216,14 @@ function trike.destroy(self)
         -- detach the passenger
         local passenger = minetest.get_player_by_name(self._passenger)
         if passenger then 
-            passenger:set_detach()
-            passenger:set_eye_offset({x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
-            player_api.player_attached[self._passenger] = nil
-            -- player should stand again
-            player_api.set_animation(passenger, "stand")
+            trike.dettach_pax(self, passenger)
         end
-        self._passenger = nil
     end
 
     if self.driver_name then
         -- detach the driver
         local player = minetest.get_player_by_name(self.driver_name)
-        player:set_detach()
-        player:set_eye_offset({x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
-        player_api.player_attached[self.driver_name] = nil
-        -- player should stand again
-        player_api.set_animation(player, "stand")
-        self.driver_name = nil
+        trike.dettachPlayer(self, player)
     end
 
     local pos = self.object:get_pos()
