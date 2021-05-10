@@ -51,3 +51,30 @@ minetest.register_privilege("flight_licence", {
     give_to_singleplayer = true
 })
 
+
+-- add chatcommand to eject from trike
+
+minetest.register_chatcommand("trike_eject", {
+	params = "",
+	description = "Ejects from trike",
+	privs = {interact = true},
+	func = function(name, param)
+        local colorstring = core.colorize('#ff0000', " >>> you are not inside your ultralight trike")
+        local player = minetest.get_player_by_name(name)
+        local attached_to = player:get_attach()
+
+		if attached_to ~= nil then
+            local parent = attached_to:get_attach()
+            if parent ~= nil then
+                local entity = parent:get_luaentity()
+                if entity.driver_name == name and entity.name == "trike:trike" then
+                    motorboat.dettach(entity, player)
+                else
+			        minetest.chat_send_player(name,colorstring)
+                end
+            end
+		else
+			minetest.chat_send_player(name,colorstring)
+		end
+	end	
+})
