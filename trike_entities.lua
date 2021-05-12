@@ -349,7 +349,7 @@ minetest.register_entity("trike:trike", {
                     if self.isinliquid or touching_ground then --isn't flying?
                         if self._passenger then
                             local passenger = minetest.get_player_by_name(self._passenger)
-                            trike.dettach_pax(self, passenger)
+                            if passenger then trike.dettach_pax(self, passenger) end
                         end
                     end
                     trike.dettachPlayer(self, clicker)
