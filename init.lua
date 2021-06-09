@@ -1,5 +1,6 @@
 trike={}
-trike.fuel = {['biofuel:biofuel'] = 1,['biofuel:bottle_fuel'] = 1,['biofuel:phial_fuel'] = 0.25, ['biofuel:fuel_can'] = 10}
+trike.fuel = {['biofuel:biofuel'] = 1,['biofuel:bottle_fuel'] = 1,
+            ['biofuel:phial_fuel'] = 0.25, ['biofuel:fuel_can'] = 10}
 trike.gravity = tonumber(minetest.settings:get("movement_gravity")) or 9.8
 
 trike.colors ={
@@ -31,8 +32,6 @@ dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_entities.lua")
 --
 -- helpers and co.
 --
-
-local creative_exists = minetest.global_exists("creative")
 
 --
 -- items
@@ -68,7 +67,7 @@ minetest.register_chatcommand("trike_eject", {
             if parent ~= nil then
                 local entity = parent:get_luaentity()
                 if entity.driver_name == name and entity.name == "trike:trike" then
-                    motorboat.dettach(entity, player)
+                    trike.dettach(entity, player)
                 else
 			        minetest.chat_send_player(name,colorstring)
                 end
@@ -76,5 +75,5 @@ minetest.register_chatcommand("trike_eject", {
 		else
 			minetest.chat_send_player(name,colorstring)
 		end
-	end	
+	end
 })

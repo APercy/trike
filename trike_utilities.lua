@@ -16,34 +16,9 @@ function trike.minmax(v,m)
 	return math.min(math.abs(v),m)*trike.sign(v)
 end
 
-local physics_attrs = {"jump", "speed", "gravity"}
-local function apply_physics_override(player, overrides)
-    if player_monoids then
-        for _, attr in pairs(physics_attrs) do
-            if overrides[attr] then
-                player_monoids[attr]:add_change(player, overrides[attr], "hangglider:glider")
-            end
-        end
-    else
-        player:set_physics_override(overrides)
-    end
-end
-
-local function remove_physics_override(player, overrides)
-    for _, attr in pairs(physics_attrs) do
-        if overrides[attr] then
-            if core.global_exists("player_monoids") then
-                player_monoids[attr]:del_change(player, "hangglider:glider")
-            else
-                player:set_physics_override({[attr] = 1})
-            end
-        end
-    end
-end
-
 --lift
 local function pitchroll2pitchyaw(aoa,roll)
-	if roll == 0.0 then return aoa,0 end 
+	if roll == 0.0 then return aoa,0 end
 	-- assumed vector x=0,y=0,z=1
 	local p1 = math.tan(aoa)
 	local y = math.cos(roll)*p1
@@ -65,18 +40,18 @@ function trike.getLiftAccel(self, velocity, accel, longit_speed, roll, curr_pos)
         --local acc = 0.8
         local daoa = deg(angle_of_attack)
 
-    	--local curr_pos = self.object:get_pos()
-        local curr_percent_height = (100 - ((curr_pos.y * 100) / max_height))/100 --to decrease the lift coefficient at hight altitudes
+        --to decrease the lift coefficient at hight altitudes
+        local curr_percent_height = (100 - ((curr_pos.y * 100) / max_height))/100
 
 	    local rotation=self.object:get_rotation()
 	    local vrot = mobkit.dir_to_rot(velocity,rotation)
 	    
-	    hpitch,hyaw = pitchroll2pitchyaw(angle_of_attack,roll)
+	    local hpitch,hyaw = pitchroll2pitchyaw(angle_of_attack,roll)
 
 	    local hrot = {x=vrot.x+hpitch,y=vrot.y-hyaw,z=roll}
 	    local hdir = mobkit.rot_to_dir(hrot) --(hrot)
 	    local cross = vector.cross(velocity,hdir)
-	    local lift_dir = vector.normalize(vector.cross(cross,hdir))	
+	    local lift_dir = vector.normalize(vector.cross(cross,hdir))
 
         local lift_coefficient = (0.24*abs(daoa)*(1/(0.025*daoa+3))^4*math.sign(angle_of_attack))
         local lift_val = (lift*(vector.length(velocity)^2)*lift_coefficient)*curr_percent_height
@@ -111,7 +86,7 @@ function trike.attach(self, player)
     player_api.player_attached[name] = true
     -- make the driver sit
     minetest.after(0.2, function()
-        local player = minetest.get_player_by_name(name)
+        player = minetest.get_player_by_name(name)
         if player then
 	        player_api.set_animation(player, "sit")
             --apply_physics_override(player, {speed=0,gravity=0,jump=0})
@@ -130,7 +105,7 @@ function trike.attach_pax(self, player)
     player_api.player_attached[name] = true
     -- make the driver sit
     minetest.after(0.2, function()
-        local player = minetest.get_player_by_name(name)
+        player = minetest.get_player_by_name(name)
         if player then
 	        player_api.set_animation(player, "sit")
             --apply_physics_override(player, {speed=0,gravity=0,jump=0})
@@ -196,7 +171,7 @@ function trike.paint(self, object, colstr, search_string)
         local entity = object:get_luaentity()
         local l_textures = entity.initial_properties.textures
         for _, texture in ipairs(l_textures) do
-            local i,indx = texture:find(search_string)
+            local indx = texture:find(search_string)
             if indx then
                 l_textures[_] = search_string .."^[multiply:".. colstr
             end
@@ -215,7 +190,7 @@ function trike.destroy(self)
     if self._passenger then
         -- detach the passenger
         local passenger = minetest.get_player_by_name(self._passenger)
-        if passenger then 
+        if passenger then
             trike.dettach_pax(self, passenger)
         end
     end
@@ -284,7 +259,7 @@ function trike.setText(self)
 end
 
 function trike.testImpact(self, velocity)
-    collision = false
+    local collision = false
     if self._last_vel == nil then return end
     local impact = abs(trike.get_hipotenuse_value(velocity, self._last_vel))
     if impact > 2 then
@@ -298,9 +273,9 @@ function trike.testImpact(self, velocity)
         local nodeb = mobkit.nodeatpos(mobkit.pos_shift(p,{z=-1}))
 		if (nodeu and nodeu.drawtype ~= 'airlike') or
             (noded and noded.drawtype ~= 'airlike') or
-            (nodef and nodef.drawtype ~= 'airlike') or 
-            (nodeb and nodeb.drawtype ~= 'airlike') or 
-            (noder and noder.drawtype ~= 'airlike') or 
+            (nodef and nodef.drawtype ~= 'airlike') or
+            (nodeb and nodeb.drawtype ~= 'airlike') or
+            (noder and noder.drawtype ~= 'airlike') or
             (nodel and nodel.drawtype ~= 'airlike') then
 			collision = true
 		end
@@ -308,7 +283,6 @@ function trike.testImpact(self, velocity)
     if collision then
         local damage = impact / 2
         self.hp_max = self.hp_max - damage --subtract the impact value directly to hp meter
-        local curr_pos = self.object:get_pos()
 
         if self.driver_name then
             minetest.sound_play("collision", {
@@ -325,7 +299,7 @@ function trike.testImpact(self, velocity)
 
             --minetest.chat_send_all('damage: '.. damage .. ' - hp: ' .. self.hp_max)
             if self.hp_max < 0 then --if acumulated damage is greater than 50, adieu
-                trike.destroy(self)   
+                trike.destroy(self)
             end
 
             local player = minetest.get_player_by_name(player_name)
@@ -387,9 +361,7 @@ function trike.flightstep(self)
     local yaw = rotation.y
 	local newyaw=yaw
     local pitch = rotation.x
-    local newpitch = pitch
 	local roll = rotation.z
-	local newroll=roll
 
     local velocity = self.object:get_velocity()
     self.object:set_velocity(velocity) --hack to avoid glitches
@@ -398,7 +370,8 @@ function trike.flightstep(self)
 
     local longit_speed = vector.dot(velocity,hull_direction)
     self._longit_speed = longit_speed
-    local longit_drag = vector.multiply(hull_direction,longit_speed*longit_speed*LONGIT_DRAG_FACTOR*-1*trike.sign(longit_speed))
+    local longit_drag = vector.multiply(hull_direction,longit_speed*longit_speed*LONGIT_DRAG_FACTOR*
+                            -1*trike.sign(longit_speed))
 	local later_speed = trike.dot(velocity,nhdir)
     --minetest.chat_send_all('later_speed: '.. later_speed)
 	local later_drag = vector.multiply(nhdir,later_speed*later_speed*LATER_DRAG_FACTOR*-1*trike.sign(later_speed))
@@ -407,8 +380,6 @@ function trike.flightstep(self)
 
     local player = nil
     if self.driver_name then player = minetest.get_player_by_name(self.driver_name) end
-    local passenger = nil
-    if self._passenger then passenger = minetest.get_player_by_name(self._passenger) end
 
     local curr_pos = self.object:get_pos()
     self.object:set_pos(curr_pos)
@@ -421,7 +392,8 @@ function trike.flightstep(self)
 
 	if is_attached then
         --control
-		accel, stop = trike.control(self, self.dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel, player, is_flying) or vel
+		accel, stop = trike.control(self, self.dtime, hull_direction,
+            longit_speed, longit_drag, later_speed, later_drag, accel, player, is_flying)
     else
         -- for some engine error the player can be detached from the machine, so lets set him attached again
         trike.checkattachBug(self)
@@ -429,9 +401,10 @@ function trike.flightstep(self)
     trike.testImpact(self, velocity)
 
     -- new yaw
-	if math.abs(self._rudder_angle)>5 then 
+	if math.abs(self._rudder_angle)>5 then
         local turn_rate = math.rad(24)
-		newyaw = yaw + self.dtime*(1 - 1 / (math.abs(longit_speed) + 1)) * self._rudder_angle / 30 * turn_rate * trike.sign(longit_speed)
+		newyaw = yaw + self.dtime*(1 - 1 / (math.abs(longit_speed) + 1)) *
+            self._rudder_angle / 30 * turn_rate * trike.sign(longit_speed)
 	end
 
     -- calculate energy consumption --
@@ -443,13 +416,13 @@ function trike.flightstep(self)
 	local snormal = {x=sdir.z,y=0,z=-sdir.x}	-- rightside, dot is negative
 	local prsr = trike.dot(snormal,nhdir)
     local rollfactor = -20
-    newroll = (prsr*math.rad(rollfactor))*(later_speed)
+    local newroll = (prsr*math.rad(rollfactor))*(later_speed)
     --minetest.chat_send_all('newroll: '.. newroll)
     ---------------------------------
     -- end roll
 
     -- pitch
-    newpitch = self._angle_of_attack/200 --(velocity.y * math.rad(6))
+    local newpitch = self._angle_of_attack/200 --(velocity.y * math.rad(6))
 
     -- adjust pitch by velocity
     if is_flying == false then --isn't flying?

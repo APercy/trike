@@ -2,6 +2,7 @@
 trike.trike_last_time_command = 0
 trike.vector_up = vector.new(0, 1, 0)
 trike.max_engine_acc = 4.5
+trike.ideal_step = 0.02
 
 dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_utilities.lua")
 
@@ -16,13 +17,14 @@ function trike.check_node_below(obj)
 	return touching_ground, liquid_below
 end
 
-function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, later_speed, later_drag, accel, player, is_flying)
+function trike.control(self, dtime, hull_direction, longit_speed,
+            longit_drag, later_speed, later_drag, accel, player, is_flying)
     trike.trike_last_time_command = trike.trike_last_time_command + self.dtime
     if trike.trike_last_time_command > 1 then trike.trike_last_time_command = 1 end
     if self.driver_name == nil then return end
     local retval_accel = accel
 
-    local rudder_limit = 30    
+    local rudder_limit = 30
     local stop = false
 
 	-- player control
@@ -44,22 +46,26 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
 			    self._engine_running = true
 	            -- sound and animation
                 self.sound_handle = minetest.sound_play({name = "engine"},
-	                {object = self.object, gain = 2.0, pitch = 0.5 + ((self._power_lever/100)/2),max_hear_distance = 32, loop = true,})
+	                {object = self.object, gain = 2.0,
+                        pitch = 0.5 + ((self._power_lever/100)/2),max_hear_distance = 32,
+                        loop = true,})
                 self.engine:set_animation_frame_speed(60)
 		    end
-        end		
+        end
 
         self._acceleration = 0
         if self._engine_running then
-            local engineacc = 0
             --engine acceleration calc
-            engineacc = (self._power_lever * trike.max_engine_acc) / 100;
+            local engineacc = (self._power_lever * trike.max_engine_acc) / 100;
             self.engine:set_animation_frame_speed(60 + self._power_lever)
+
+            local add_factor = 1
+            add_factor = add_factor * (dtime/trike.ideal_step) --adjusting the command speed by dtime
 
             --increase power lever
             if ctrl.jump then
                 if self._power_lever < 100 then
-                    self._power_lever = self._power_lever + 1
+                    self._power_lever = self._power_lever + add_factor
                 end
                 if self._power_lever > 100 then
                     self._power_lever = 100
@@ -68,13 +74,15 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
                     --sound
                     minetest.sound_stop(self.sound_handle)
                     self.sound_handle = minetest.sound_play({name = "engine"},
-	                    {object = self.object, gain = 2.0, pitch = 0.5 + ((self._power_lever/100)/2),max_hear_distance = 32, loop = true,})
+	                    {object = self.object, gain = 2.0,
+                            pitch = 0.5 + ((self._power_lever/100)/2),max_hear_distance = 32,
+                            loop = true,})
                 end
             end
             --decrease power lever
             if ctrl.sneak then
                 if self._power_lever > 0 then
-                    self._power_lever = self._power_lever - 1
+                    self._power_lever = self._power_lever - add_factor
                     if self._power_lever < 0 then self._power_lever = 0 end
                 end
                 if self._power_lever <= 0 and is_flying == false then
@@ -92,7 +100,9 @@ function trike.control(self, dtime, hull_direction, longit_speed, longit_drag, l
                     --sound
                     minetest.sound_stop(self.sound_handle)
                     self.sound_handle = minetest.sound_play({name = "engine"},
-		                {object = self.object, gain = 2.0, pitch = 0.5 + ((self._power_lever/100)/2),max_hear_distance = 32, loop = true,})
+		                {object = self.object, gain = 2.0,
+                            pitch = 0.5 + ((self._power_lever/100)/2),
+                            max_hear_distance = 32, loop = true,})
                 end
             end
             --do not exceed

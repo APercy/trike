@@ -137,7 +137,7 @@ minetest.register_entity("trike:trike", {
         stepheight = 0.5,
         textures = {"trike_black.png", "trike_metal.png", "trike_metal.png", "trike_metal.png",
                     "trike_metal.png", "trike_metal.png", "trike_painting.png", "trike_black.png",
-                    "trike_white.png", "trike_black.png", "trike_black.png", "trike_black.png", 
+                    "trike_white.png", "trike_black.png", "trike_black.png", "trike_black.png",
                     "trike_grey.png", "trike_panel.png", "trike_black.png", "trike_metal.png", "trike_black.png"},
     },
     textures = {},
@@ -152,7 +152,6 @@ minetest.register_entity("trike:trike", {
     _passenger = nil,
     _color = "#0063b0",
     _rudder_angle = 0,
-    _angle_of_attack = 0,
     _acceleration = 0,
     _engine_running = false,
     _angle_of_attack = 2,
@@ -252,8 +251,6 @@ minetest.register_entity("trike:trike", {
 			-- do not allow other players to remove the object while there is a driver
 			return
 		end
-
-        local touching_ground, liquid_below = trike.check_node_below(self.object)
         
         local is_attached = false
         if puncher:get_attach() == self.object then is_attached = true end
@@ -274,7 +271,7 @@ minetest.register_entity("trike:trike", {
                     local inv = puncher:get_inventory()
                     if inv:contains_item("main", inventory_item) then
                         local stack = ItemStack(inventory_item .. " 1")
-                        local taken = inv:remove_item("main", stack)
+                        inv:remove_item("main", stack)
                         self.hp_max = self.hp_max + 10
                         if self.hp_max > 50 then self.hp_max = 50 end
                         trike.setText(self)
@@ -301,7 +298,8 @@ minetest.register_entity("trike:trike", {
                     -- end painting
 
 			    else -- deal damage
-				    if not self.driver and toolcaps and toolcaps.damage_groups and toolcaps.damage_groups.fleshy and item_name ~= trike.fuel then
+				    if not self.driver and toolcaps and toolcaps.damage_groups and
+                            toolcaps.damage_groups.fleshy and item_name ~= trike.fuel then
 					    --mobkit.hurt(self,toolcaps.damage_groups.fleshy - 1)
 					    --mobkit.make_sound(self,'hit')
                         self.hp_max = self.hp_max - 10
@@ -346,7 +344,7 @@ minetest.register_entity("trike:trike", {
 	            if name == self.driver_name then
                     -- eject passenger if the plane is on ground
                     local touching_ground, liquid_below = trike.check_node_below(self.object)
-                    if self.isinliquid or touching_ground then --isn't flying?
+                    if self.isinliquid or touching_ground or liquid_below then --isn't flying?
                         if self._passenger then
                             local passenger = minetest.get_player_by_name(self._passenger)
                             if passenger then trike.dettach_pax(self, passenger) end
