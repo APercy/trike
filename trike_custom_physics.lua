@@ -33,34 +33,8 @@ function trike.physics(self)
 		
 		self.object:set_velocity(vnew)
 	end
-	
-	--[[ buoyancy
-	local surface = nil
-	local surfnodename = nil
-	local spos = mobkit.get_stand_pos(self)
-	spos.y = spos.y+0.01
-	-- get surface height
-	local snodepos = mobkit.get_node_pos(spos)
-	local surfnode = mobkit.nodeatpos(spos)
-	while surfnode and (surfnode.drawtype == 'liquid' or surfnode.drawtype == 'flowingliquid') do
-		surfnodename = surfnode.name
-		surface = snodepos.y +0.5
-		if surface > spos.y+self.height then break end
-		snodepos.y = snodepos.y+1
-		surfnode = mobkit.nodeatpos(snodepos)
-	end
-	self.isinliquid = surfnodename
-	if surface then				-- standing in liquid
---		self.isinliquid = true
-		local submergence = min(surface-spos.y,self.height)/self.height
---		local balance = self.buoyancy*self.height
-		local buoyacc = mobkit.gravity*(self.buoyancy-submergence)
-		mobkit.set_acceleration(self.object,
-			{x=-vel.x*self.water_drag,y=buoyacc-vel.y*abs(vel.y)*0.4,z=-vel.z*self.water_drag})
-	else
---		self.isinliquid = false
-	    self.object:set_acceleration({x=0,y=mobkit.gravity,z=0})
-	end]]--
-    self.object:set_acceleration({x=0,y=mobkit.gravity,z=0})
+    
+    --local gravity_accell = {x=0,y=mobkit.gravity,z=0}
+    --self.object:set_acceleration(gravity_accell)
 
 end
