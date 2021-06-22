@@ -34,7 +34,7 @@ function trike.physics(self)
 		self.object:set_velocity(vnew)
 	end
     
-    --local gravity_accell = {x=0,y=mobkit.gravity,z=0}
-    --self.object:set_acceleration(gravity_accell)
+    local gravity_accell = {x=0,y=mobkit.gravity,z=0}
+    self.object:set_acceleration(gravity_accell)
 
 end
