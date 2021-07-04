@@ -113,14 +113,14 @@ function trike.control(self, dtime, hull_direction, longit_speed,
             end
             self._acceleration = engineacc
         else
-	        local paddleacc = 0
+	        local pushacc = 0
 	        if longit_speed < 1.0 then
-                if ctrl.jump then paddleacc = 0.5 end
+                if ctrl.jump then pushacc = 0.5 end
             end
 	        if longit_speed > -1.0 then
-                if ctrl.sneak then paddleacc = -0.5 end
+                if ctrl.sneak then pushacc = -0.5 end
 	        end
-	        self._acceleration = paddleacc
+	        self._acceleration = pushacc
         end
 
         local hull_acc = vector.multiply(hull_direction,self._acceleration)

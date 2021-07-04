@@ -356,7 +356,7 @@ function trike.check_is_under_water(obj)
 end
 
 function trike.flightstep(self)
-    local accel_y = self.object:get_acceleration().y
+    --local accel_y = self.object:get_acceleration().y
     local rotation = self.object:get_rotation()
     local yaw = rotation.y
 	local newyaw=yaw
@@ -364,7 +364,7 @@ function trike.flightstep(self)
 	local roll = rotation.z
 
     local velocity = self.object:get_velocity()
-    self.object:set_velocity(velocity) --hack to avoid glitches
+    --self.object:set_velocity(velocity) --hack to avoid glitches
     local hull_direction = mobkit.rot_to_dir(rotation) --minetest.yaw_to_dir(yaw)
     local nhdir = {x=hull_direction.z,y=0,z=-hull_direction.x}		-- lateral unit vector
 
@@ -454,7 +454,7 @@ function trike.flightstep(self)
     self.power_gauge:set_attach(self.object,'',TRIKE_GAUGE_POWER_POSITION,{x=0,y=0,z=power_indicator_angle})
 
     --lift calculation
-    accel.y = accel_y
+    accel.y = mobkit.gravity --accel_y
     local new_accel = accel
     if longit_speed > 2 then
         new_accel = trike.getLiftAccel(self, velocity, new_accel, longit_speed, roll, curr_pos)
@@ -482,6 +482,6 @@ function trike.flightstep(self)
     self.climb_gauge:set_attach(self.object,'',TRIKE_GAUGE_CLIMBER_POSITION,{x=0,y=0,z=climb_angle})
 
     --saves last velocity for collision detection (abrupt stop)
-    self._last_vel = self.object:get_velocity()
+    self.lastvelocity = self.object:get_velocity()
 end
 

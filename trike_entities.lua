@@ -157,7 +157,6 @@ minetest.register_entity("trike:trike", {
     _angle_of_attack = 2,
     _power_lever = 0,
     _energy = 0.001,
-    _last_vel = {x=0,y=0,z=0},
     _longit_speed = 0,
     _lastrot = {x=0,y=0,z=0},
 
@@ -234,7 +233,34 @@ minetest.register_entity("trike:trike", {
 		self.object:set_armor_groups({immortal=1})
 	end,
 
-    on_step = mobkit.stepfunc,
+    --on_step = mobkit.stepfunc,
+    on_step = function(self,dtime,colinfo)	-- not intended to be modified
+	    self.dtime = math.min(dtime,0.2)
+	    self.colinfo = colinfo
+	    
+    --  physics comes first
+	    local vel = self.object:get_velocity()
+	    
+	    if colinfo then 
+		    self.isonground = colinfo.touching_ground
+	    else
+		    if self.lastvelocity.y==0 and vel.y==0 then
+			    self.isonground = true
+		    else
+			    self.isonground = false
+		    end
+	    end
+	    
+	    self:physics()
+
+	    if self.logic then
+		    self:logic()
+	    end
+	    
+	    self.lastvelocity = self.object:get_velocity()
+	    self.time_total=self.time_total+self.dtime
+    end,
+
     logic = trike.flightstep,
 
 	on_punch = function(self, puncher, ttime, toolcaps, dir, damage)
