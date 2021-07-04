@@ -159,6 +159,7 @@ minetest.register_entity("trike:trike", {
     _energy = 0.001,
     _longit_speed = 0,
     _lastrot = {x=0,y=0,z=0},
+    _last_accell = {x=0,y=0,z=0},
 
     get_staticdata = function(self) -- unloaded/unloads ... is now saved
         return minetest.serialize({

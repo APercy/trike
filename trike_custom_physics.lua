@@ -1,7 +1,7 @@
 local abs = math.abs
 
 function trike.physics(self)
-    --[[local friction = 0.99
+    local friction = 0.99
 	local vel=self.object:get_velocity()
 		-- dumb friction
 	if self.isonground and not self.isinliquid then
@@ -32,9 +32,9 @@ function trike.physics(self)
 		end
 		
 		self.object:set_velocity(vnew)
-	end]]--
+	end
     
     --local gravity_accell = {x=0,y=mobkit.gravity,z=0}
     --self.object:set_acceleration(gravity_accell)
-
+    --self.object:set_acceleration(self._last_accell)
 end

@@ -454,11 +454,12 @@ function trike.flightstep(self)
     self.power_gauge:set_attach(self.object,'',TRIKE_GAUGE_POWER_POSITION,{x=0,y=0,z=power_indicator_angle})
 
     --lift calculation
-    accel.y = mobkit.gravity --accel_y
+    accel.y = accel.y + mobkit.gravity --accel_y
     local new_accel = accel
     if longit_speed > 2 then
         new_accel = trike.getLiftAccel(self, velocity, new_accel, longit_speed, roll, curr_pos)
     end
+    self._last_accell = new_accel
     -- end lift
 
 	if newyaw~=yaw or newpitch~=pitch or newroll~=roll then
