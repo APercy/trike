@@ -19,6 +19,7 @@ end
 
 function trike.control(self, dtime, hull_direction, longit_speed,
             longit_drag, later_speed, later_drag, accel, player, is_flying)
+
     trike.trike_last_time_command = trike.trike_last_time_command + self.dtime
     if trike.trike_last_time_command > 1 then trike.trike_last_time_command = 1 end
     if self.driver_name == nil then return end
