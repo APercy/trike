@@ -459,16 +459,17 @@ function trike.flightstep(self)
     if longit_speed > 2 then
         new_accel = trike.getLiftAccel(self, velocity, new_accel, longit_speed, roll, curr_pos)
     end
-    self._last_accell = new_accel
     -- end lift
 
 	if newyaw~=yaw or newpitch~=pitch or newroll~=roll then
         self.object:set_rotation({x=newpitch,y=newyaw,z=newroll})
     end
 
+    
     if stop ~= true then
         --self.object:set_velocity(velocity)
-        self.object:set_acceleration(new_accel)
+        self._last_accell = new_accel
+        --self.object:set_acceleration(new_accel)
         --self.object:set_pos(self.object:get_pos())
     elseif stop == false then
         self.object:set_velocity({x=0,y=0,z=0})

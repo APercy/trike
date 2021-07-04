@@ -36,5 +36,5 @@ function trike.physics(self)
     
     --local gravity_accell = {x=0,y=mobkit.gravity,z=0}
     --self.object:set_acceleration(gravity_accell)
-    --self.object:set_acceleration(self._last_accell)
+    self.object:set_acceleration(self._last_accell)
 end
