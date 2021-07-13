@@ -149,6 +149,7 @@ minetest.register_entity("trike:trike", {
     hp_max = 50,
     buoyancy = 2,
     physics = trike.physics,
+    springiness = 0.3,
     _passenger = nil,
     _color = "#0063b0",
     _rudder_angle = 0,
@@ -160,6 +161,7 @@ minetest.register_entity("trike:trike", {
     _longit_speed = 0,
     _lastrot = {x=0,y=0,z=0},
     _last_accell = {x=0,y=0,z=0},
+    lastvelocity = nil,
 
     get_staticdata = function(self) -- unloaded/unloads ... is now saved
         return minetest.serialize({

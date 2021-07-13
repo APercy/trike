@@ -260,8 +260,8 @@ end
 
 function trike.testImpact(self, velocity)
     local collision = false
-    if self._last_vel == nil then return end
-    local impact = abs(trike.get_hipotenuse_value(velocity, self._last_vel))
+    if self.lastvelocity == nil then return end
+    local impact = abs(trike.get_hipotenuse_value(velocity, self.lastvelocity))
     if impact > 2 then
         --minetest.chat_send_all('impact: '.. impact .. ' - hp: ' .. self.hp_max)
         local p = self.object:get_pos()
@@ -454,7 +454,7 @@ function trike.flightstep(self)
     self.power_gauge:set_attach(self.object,'',TRIKE_GAUGE_POWER_POSITION,{x=0,y=0,z=power_indicator_angle})
 
     --lift calculation
-    accel.y = accel.y + mobkit.gravity --accel_y
+    --accel.y = accel.y + mobkit.gravity --accel_y
     local new_accel = accel
     if longit_speed > 2 then
         new_accel = trike.getLiftAccel(self, velocity, new_accel, longit_speed, roll, curr_pos)
@@ -467,10 +467,7 @@ function trike.flightstep(self)
 
     
     if stop ~= true then
-        --self.object:set_velocity(velocity)
         self._last_accell = new_accel
-        --self.object:set_acceleration(new_accel)
-        --self.object:set_pos(self.object:get_pos())
     elseif stop == false then
         self.object:set_velocity({x=0,y=0,z=0})
     end
