@@ -278,6 +278,9 @@ function trike.testImpact(self, velocity)
             (noder and noder.drawtype ~= 'airlike') or
             (nodel and nodel.drawtype ~= 'airlike') then
 			collision = true
+        else
+            --reset the speed to the last, because the forced stop was caused by lag
+            self.object:set_velocity(self.lastvelocity)
 		end
     end
     if collision then
