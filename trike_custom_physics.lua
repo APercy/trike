@@ -1,7 +1,7 @@
 local abs = math.abs
 
 function trike.physics(self)
-    local friction = 0.99
+    local friction = 0.8
 	local vel=self.object:get_velocity()
 		-- dumb friction
 	if self.isonground and not self.isinliquid then

@@ -259,38 +259,39 @@ function trike.setText(self)
 end
 
 function trike.testImpact(self, velocity)
+    local p = self.object:get_pos()
     local collision = false
     if self.lastvelocity == nil then return end
+    --lets calculate the vertical speed, to avoid the bug on colliding on floor with hard lag
+    if abs(velocity.y - self.lastvelocity.y) > 2 then
+		local noded = mobkit.nodeatpos(mobkit.pos_shift(p,{y=-1}))
+	    if (noded and noded.drawtype ~= 'airlike') then
+		    collision = true
+	    else
+            self.object:set_velocity(self.lastvelocity)
+            self.object:set_acceleration(self._last_accell)
+        end
+    end
     local impact = abs(trike.get_hipotenuse_value(velocity, self.lastvelocity))
     if impact > 2 then
         --minetest.chat_send_all('impact: '.. impact .. ' - hp: ' .. self.hp_max)
-        local p = self.object:get_pos()
 		local nodeu = mobkit.nodeatpos(mobkit.pos_shift(p,{y=1}))
-		local noded = mobkit.nodeatpos(mobkit.pos_shift(p,{y=-0.5}))
         local nodel = mobkit.nodeatpos(mobkit.pos_shift(p,{x=-1}))
         local noder = mobkit.nodeatpos(mobkit.pos_shift(p,{x=1}))
         local nodef = mobkit.nodeatpos(mobkit.pos_shift(p,{z=1}))
         local nodeb = mobkit.nodeatpos(mobkit.pos_shift(p,{z=-1}))
 		if (nodeu and nodeu.drawtype ~= 'airlike') or
+            --(noded and noded.drawtype ~= 'airlike') or
             (nodef and nodef.drawtype ~= 'airlike') or
             (nodeb and nodeb.drawtype ~= 'airlike') or
             (noder and noder.drawtype ~= 'airlike') or
             (nodel and nodel.drawtype ~= 'airlike') then
 			collision = true
 		end
-
-        --lets calculate the vertical speed, to avoid the bug on colliding on floor with hard lag
-        if abs(velocity.y - self.lastvelocity.y) > 2 then
-		    if (noded and noded.drawtype ~= 'airlike') then
-			    collision = true
-		    end
-        end
-        if collision == false then
-            self.object:set_velocity(self.lastvelocity)
-        end
-
     end
+
     if collision then
+        --self.object:set_velocity({x=0,y=0,z=0})
         local damage = impact / 2
         self.hp_max = self.hp_max - damage --subtract the impact value directly to hp meter
 
@@ -327,7 +328,6 @@ function trike.testImpact(self, velocity)
                 end
             end
         end
-
     end
 end
 
