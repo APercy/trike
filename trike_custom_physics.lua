@@ -35,6 +35,6 @@ function trike.physics(self)
 	end
     
     local accel = self._last_accell
-    accel.y = accel.y + mobkit.gravity
+    --accel.y = accel.y + mobkit.gravity
     self.object:set_acceleration(accel)
 end

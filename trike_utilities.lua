@@ -366,7 +366,7 @@ function trike.check_is_under_water(obj)
 end
 
 function trike.flightstep(self)
-    --local accel_y = self.object:get_acceleration().y
+    local accel_y = self.object:get_acceleration().y
     local rotation = self.object:get_rotation()
     local yaw = rotation.y
 	local newyaw=yaw
@@ -464,7 +464,7 @@ function trike.flightstep(self)
     self.power_gauge:set_attach(self.object,'',TRIKE_GAUGE_POWER_POSITION,{x=0,y=0,z=power_indicator_angle})
 
     --lift calculation
-    --accel.y = accel.y + mobkit.gravity --accel_y
+    accel.y = accel.y + mobkit.gravity --accel_y
     local new_accel = accel
     if longit_speed > 2 then
         new_accel = trike.getLiftAccel(self, velocity, new_accel, longit_speed, roll, curr_pos)
