@@ -88,11 +88,13 @@ function trike.control(self, dtime, hull_direction, longit_speed,
                 end
                 if self._power_lever <= 0 and is_flying == false then
                     --break
-                    if longit_speed >= 0.1 then
+                    if longit_speed > 0 then
                         engineacc = -1
+                        if (longit_speed + engineacc) < 0 then engineacc = longit_speed * -1 end
                     end
-                    if longit_speed <= -0.1 then
+                    if longit_speed < 0 then
                         engineacc = 1
+                        if (longit_speed + engineacc) > 0 then engineacc = longit_speed * -1 end
                     end
                     if abs(longit_speed) < 0.1 then
                         stop = true

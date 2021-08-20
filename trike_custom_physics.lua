@@ -1,10 +1,11 @@
 local abs = math.abs
 
 function trike.physics(self)
-    local friction = 0.8
+    local friction = 0.99
 	local vel=self.object:get_velocity()
 		-- dumb friction
 	if self.isonground and not self.isinliquid then
+        --minetest.chat_send_all('okay')
 		self.object:set_velocity({x=vel.x*friction,
 								y=vel.y,
 								z=vel.z*friction})
@@ -12,6 +13,7 @@ function trike.physics(self)
 	
 	-- bounciness
 	if self.springiness and self.springiness > 0 then
+        vel=self.object:get_velocity()
 		local vnew = vector.new(vel)
 		
 		if not self.collided then						-- ugly workaround for inconsistent collisions
