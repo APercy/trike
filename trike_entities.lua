@@ -147,6 +147,8 @@ minetest.register_entity("trike:trike", {
     static_save = true,
     infotext = "A nice ultralight",
     hp_max = 50,
+    shaded = true,
+    show_on_minimap = true,
     buoyancy = 2,
     physics = trike.physics,
     springiness = 0.3,
