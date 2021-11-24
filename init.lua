@@ -28,6 +28,8 @@ dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_fuel_management.lua"
 dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_custom_physics.lua")
 dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_utilities.lua")
 dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_entities.lua")
+dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_hud.lua")
+dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_forms.lua")
 
 --
 -- helpers and co.

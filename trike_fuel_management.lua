@@ -40,11 +40,6 @@ function trike.consumptionCalc(self, accel)
         local consumed_power = self._power_lever/700000
         --minetest.chat_send_all('consumed: '.. consumed_power)
         self._energy = self._energy - consumed_power;
-
-        local energy_indicator_angle = trike.get_gauge_angle(self._energy)
-        if self.fuel_gauge:get_luaentity() then
-            self.fuel_gauge:set_attach(self.object,'',TRIKE_GAUGE_FUEL_POSITION,{x=0,y=0,z=energy_indicator_angle})
-        end
     end
     if self._energy <= 0 and self._engine_running and accel ~= nil then
         self._engine_running = false

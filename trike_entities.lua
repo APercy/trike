@@ -163,6 +163,7 @@ minetest.register_entity("trike:trike", {
     _longit_speed = 0,
     _lastrot = {x=0,y=0,z=0},
     _last_accell = {x=0,y=0,z=0},
+    _show_hud = false,
     lastvelocity = nil,
 
     get_staticdata = function(self) -- unloaded/unloads ... is now saved
@@ -380,15 +381,7 @@ minetest.register_entity("trike:trike", {
             end
             if can_access then
 	            if name == self.driver_name then
-                    -- eject passenger if the plane is on ground
-                    local touching_ground, liquid_below = trike.check_node_below(self.object)
-                    if self.isinliquid or touching_ground or liquid_below then --isn't flying?
-                        if self._passenger then
-                            local passenger = minetest.get_player_by_name(self._passenger)
-                            if passenger then trike.dettach_pax(self, passenger) end
-                        end
-                    end
-                    trike.dettachPlayer(self, clicker)
+                    trike.pilot_formspec(name)
 	            elseif not self.driver_name then
                     local is_under_water = trike.check_is_under_water(self.object)
                     if is_under_water then return end

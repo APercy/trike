@@ -117,6 +117,7 @@ function trike.dettachPlayer(self, player)
     local name = self.driver_name
     trike.setText(self)
 
+    trike.remove_hud(player)
     self._engine_running = false
 
     -- driver clicked the object => driver gets off the vehicle
@@ -130,10 +131,12 @@ function trike.dettachPlayer(self, player)
     self.engine:set_animation_frame_speed(0)
 
     -- detach the player
-    player:set_detach()
-    player_api.player_attached[name] = nil
-    player:set_eye_offset({x=0,y=0,z=0},{x=0,y=0,z=0})
-    player_api.set_animation(player, "stand")
+    if player then
+        player:set_detach()
+        player_api.player_attached[name] = nil
+        player:set_eye_offset({x=0,y=0,z=0},{x=0,y=0,z=0})
+        player_api.set_animation(player, "stand")
+    end
     self.driver = nil
     --remove_physics_override(player, {speed=1,gravity=1,jump=1})
 end
@@ -459,6 +462,10 @@ function trike.flightstep(self)
     --adjust wing pitch (3d model)
     self.wing:set_attach(self.object,'',{x=0,y=29,z=0},{x=-self._angle_of_attack,y=0,z=0})
 
+    local indicated_speed = longit_speed
+    if indicated_speed < 0 then indicated_speed = 0 end
+    local speed_angle = trike.get_gauge_angle(indicated_speed, -45)
+
     --adjust power indicator
     local power_indicator_angle = trike.get_gauge_angle(self._power_lever/10)
     self.power_gauge:set_attach(self.object,'',TRIKE_GAUGE_POWER_POSITION,{x=0,y=0,z=power_indicator_angle})
@@ -490,6 +497,19 @@ function trike.flightstep(self)
     --minetest.chat_send_all('rate '.. climb_rate)
     local climb_angle = trike.get_gauge_angle(climb_rate)
     self.climb_gauge:set_attach(self.object,'',TRIKE_GAUGE_CLIMBER_POSITION,{x=0,y=0,z=climb_angle})
+
+    local energy_indicator_angle = trike.get_gauge_angle(self._energy)
+    if self.fuel_gauge:get_luaentity() then
+        self.fuel_gauge:set_attach(self.object,'',TRIKE_GAUGE_FUEL_POSITION,{x=0,y=0,z=energy_indicator_angle})
+    end
+
+    if is_attached then
+        if self._show_hud then
+            trike.update_hud(player, climb_angle, speed_angle - 130, power_indicator_angle - 270, (energy_indicator_angle*-1)-90)
+        else
+            trike.remove_hud(player)
+        end
+    end
 
     --saves last velocity for collision detection (abrupt stop)
     self.lastvelocity = self.object:get_velocity()
