@@ -69,7 +69,7 @@ minetest.register_chatcommand("trike_eject", {
             if parent ~= nil then
                 local entity = parent:get_luaentity()
                 if entity.driver_name == name and entity.name == "trike:trike" then
-                    trike.dettach(entity, player)
+                    trike.dettachPlayer(entity, player)
                 else
 			        minetest.chat_send_player(name,colorstring)
                 end
