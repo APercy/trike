@@ -73,11 +73,13 @@ function trike.control(self, dtime, hull_direction, longit_speed,
                     engineacc = trike.max_engine_acc
                 else
                     --sound
-                    minetest.sound_stop(self.sound_handle)
-                    self.sound_handle = minetest.sound_play({name = "engine"},
-	                    {object = self.object, gain = 2.0,
-                            pitch = 0.5 + ((self._power_lever/100)/2),max_hear_distance = 32,
-                            loop = true,})
+                    if self.sound_handle then
+                        minetest.sound_stop(self.sound_handle)
+                        self.sound_handle = minetest.sound_play({name = "engine"},
+	                        {object = self.object, gain = 2.0,
+                                pitch = 0.5 + ((self._power_lever/100)/2),max_hear_distance = 32,
+                                loop = true,})
+                    end
                 end
             end
             --decrease power lever
