@@ -373,7 +373,7 @@ minetest.register_entity("trike:trike", {
             self.owner = name
         end
 
-        if self.owner == name then
+        if self.owner == name or minetest.check_player_privs(clicker, {protection_bypass=true}) then
             -- pilot section
             local can_access = true
             if trike.restricted == "true" then
