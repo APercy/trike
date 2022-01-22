@@ -148,11 +148,13 @@ function trike.dettach_pax(self, player)
     self._passenger = nil
 
     -- detach the player
-    player:set_detach()
-    player_api.player_attached[name] = nil
-    player_api.set_animation(player, "stand")
-    player:set_eye_offset({x=0,y=0,z=0},{x=0,y=0,z=0})
-    --remove_physics_override(player, {speed=1,gravity=1,jump=1})
+    if player then
+        player:set_detach()
+        player_api.player_attached[name] = nil
+        player_api.set_animation(player, "stand")
+        player:set_eye_offset({x=0,y=0,z=0},{x=0,y=0,z=0})
+        --remove_physics_override(player, {speed=1,gravity=1,jump=1})
+    end
 end
 
 function trike.checkAttach(self, player)
