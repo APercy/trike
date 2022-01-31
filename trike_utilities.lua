@@ -397,7 +397,7 @@ function trike.flightstep(self)
     if self.driver_name then player = minetest.get_player_by_name(self.driver_name) end
 
     local curr_pos = self.object:get_pos()
-    self.object:set_pos(curr_pos)
+    self.object:move_to(curr_pos)
 
     local node_bellow = mobkit.nodeatpos(mobkit.pos_shift(curr_pos,{y=-1}))
     local is_flying = true
