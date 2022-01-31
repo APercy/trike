@@ -373,44 +373,69 @@ minetest.register_entity("trike:trike", {
             self.owner = name
         end
 
-        if self.owner == name or minetest.check_player_privs(clicker, {protection_bypass=true}) then
-            -- pilot section
-            local can_access = true
-            if trike.restricted == "true" then
-                can_access = minetest.check_player_privs(clicker, {flight_licence=true})
-            end
-            if can_access then
-	            if name == self.driver_name then
-                    trike.pilot_formspec(name)
-	            elseif not self.driver_name then
-                    local is_under_water = trike.check_is_under_water(self.object)
-                    if is_under_water then return end
-                    -- no driver => clicker is new driver
-                    trike.attach(self, clicker)
-	            end
+        local passenger_name = nil
+        if self._passenger then
+            passenger_name = self._passenger
+        end
+
+        local touching_ground, liquid_below = trike.check_node_below(self.object)
+        local is_on_ground = self.isinliquid or touching_ground or liquid_below
+        local is_under_water = trike.check_is_under_water(self.object)
+
+        --minetest.chat_send_all('name '.. dump(name) .. ' - pilot: ' .. dump(self.driver_name) .. ' - pax: ' .. dump(passenger_name))
+        --=========================
+        --  detach pilot
+        --=========================
+        if name == self.driver_name then
+            trike.pilot_formspec(name)
+        --=========================
+        --  detach passenger
+        --=========================
+        elseif name == passenger_name then
+            if is_on_ground or clicker:get_player_control().sneak then
+                trike.dettach_pax(self, clicker)
             else
-                minetest.show_formspec(name, "trike:flightlicence",
-                    "size[4,2]" ..
-                    "label[0.0,0.0;Sorry ...]"..
-                    "label[0.0,0.7;You need a flight licence to fly it.]" ..
-                    "label[0.0,1.0;You must obtain it from server admin.]" ..
-                    "button_exit[1.5,1.9;0.9,0.1;e;Exit]")
+                minetest.chat_send_player(name, "Hold sneak and right-click to disembark while flying")
             end
-            -- end pilot section
+
+        --=========================
+        --  attach pilot
+        --=========================
+        elseif not self.driver_name then
+            if self.owner == name or minetest.check_player_privs(clicker, {protection_bypass=true}) then
+                if trike.restricted == "true" and not minetest.check_player_privs(clicker, {flight_licence=true}) then
+                    minetest.show_formspec(name, "trike:flightlicence",
+                        "size[4,2]" ..
+                        "label[0.0,0.0;Sorry ...]"..
+                        "label[0.0,0.7;You need a flight licence to fly it.]" ..
+                        "label[0.0,1.0;You must obtain it from server admin.]" ..
+                        "button_exit[1.5,1.9;0.9,0.1;e;Exit]")
+                    return
+                end
+
+                if is_under_water then return end
+                --remove pax to prevent bug
+                if self._passenger then 
+                    local pax_obj = minetest.get_player_by_name(self._passenger)
+                    trike.dettach_pax(self, pax_obj)
+                end
+
+                --attach player
+                -- no driver => clicker is new driver
+                trike.attach(self, clicker)
+            else
+                minetest.chat_send_player(name, core.colorize('#ff0000', " >>> You aren't the owner of this ultralight."))
+            end
+
+        --=========================
+        --  attach passenger
+        --=========================
+        elseif self.driver_name and not self._passenger then
+            trike.attach_pax(self, clicker)
+        
         else
-            --passenger section
-            --only can enter when the pilot is inside
-            if self.driver_name then
-                if self._passenger == nil then
-                    trike.attach_pax(self, clicker)
-                else
-                    trike.dettach_pax(self, clicker)
-                end
-            else
-                if self._passenger then
-                    trike.dettach_pax(self, clicker)
-                end
-            end
+            minetest.chat_send_player(name, core.colorize('#ff0000', " >>> Can't enter airplane."))
         end
 	end,
+
 })

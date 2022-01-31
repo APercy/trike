@@ -75,6 +75,25 @@ function trike.get_gauge_angle(value)
 	return angle
 end
 
+--returns 0 for old, 1 for new
+function trike.detect_player_api(player)
+    local player_proterties = player:get_properties()
+    local mesh = "character.b3d"
+    if player_proterties.mesh == mesh then
+        local models = player_api.registered_models
+        local character = models[mesh]
+        if character then
+            if character.animations.sit.eye_height then
+                return 1
+            else
+                return 0
+            end
+        end
+    end
+
+    return 0
+end
+
 -- attach player
 function trike.attach(self, player)
     local name = player:get_player_name()
@@ -82,7 +101,11 @@ function trike.attach(self, player)
 
     -- attach the driver
     player:set_attach(self.pilot_seat_base, "", {x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
-    player:set_eye_offset({x = 0, y = -6, z = 2}, {x = 0, y = 1, z = -30})
+    local eye_y = -6
+    if demoiselle.detect_player_api(player) == 1 then
+        eye_y = 0.5
+    end
+    player:set_eye_offset({x = 0, y = eye_y, z = 2}, {x = 0, y = 1, z = -30})
     player_api.player_attached[name] = true
     -- make the driver sit
     minetest.after(0.2, function()
@@ -101,7 +124,11 @@ function trike.attach_pax(self, player)
 
     -- attach the driver
     player:set_attach(self.passenger_seat_base, "", {x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
-    player:set_eye_offset({x = 0, y = -3, z = 3}, {x = 0, y = 3, z = -30})
+    local eye_y = -3
+    if demoiselle.detect_player_api(player) == 1 then
+        eye_y = 3.5
+    end
+    player:set_eye_offset({x = 0, y = eye_y, z = 3}, {x = 0, y = 3, z = -30})
     player_api.player_attached[name] = true
     -- make the driver sit
     minetest.after(0.2, function()
