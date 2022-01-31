@@ -102,7 +102,7 @@ function trike.attach(self, player)
     -- attach the driver
     player:set_attach(self.pilot_seat_base, "", {x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
     local eye_y = -6
-    if demoiselle.detect_player_api(player) == 1 then
+    if trike.detect_player_api(player) == 1 then
         eye_y = 0.5
     end
     player:set_eye_offset({x = 0, y = eye_y, z = 2}, {x = 0, y = 1, z = -30})
@@ -125,7 +125,7 @@ function trike.attach_pax(self, player)
     -- attach the driver
     player:set_attach(self.passenger_seat_base, "", {x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
     local eye_y = -3
-    if demoiselle.detect_player_api(player) == 1 then
+    if trike.detect_player_api(player) == 1 then
         eye_y = 3.5
     end
     player:set_eye_offset({x = 0, y = eye_y, z = 3}, {x = 0, y = 3, z = -30})
