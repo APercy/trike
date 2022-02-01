@@ -40,12 +40,6 @@ minetest.register_craftitem("trike:trike", {
 	end,
 })
 
--- trike repair
-minetest.register_craftitem("trike:repair_tool",{
-	description = "Trike repair tool",
-	inventory_image = "repair_tool.png",
-})
-
 --
 -- crafting
 --

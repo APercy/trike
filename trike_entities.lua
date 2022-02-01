@@ -302,7 +302,7 @@ minetest.register_entity("trike:trike", {
             end
 
             --repair
-            if item_name == "trike:repair_tool" and self._engine_running == false  then
+            if item_name == "airutils:repair_tool" and self._engine_running == false  then
                 if self.hp_max < 50 then
                     local inventory_item = "default:steel_ingot"
                     local inv = puncher:get_inventory()
