@@ -189,7 +189,7 @@ minetest.register_entity("trike:trike", {
             self.driver_name = data.stored_driver_name
             --minetest.debug("loaded: ", self._energy)
         end
-        trike.setText(self)
+        airutils.setText(self, "ultralight trike")
         self.object:set_animation({x = 1, y = 12}, 0, 0, true)
 
         local pos = self.object:get_pos()
@@ -311,7 +311,7 @@ minetest.register_entity("trike:trike", {
                         inv:remove_item("main", stack)
                         self.hp_max = self.hp_max + 10
                         if self.hp_max > 50 then self.hp_max = 50 end
-                        trike.setText(self)
+                        airutils.setText(self,"ultralight trike")
                     else
                         minetest.chat_send_player(puncher:get_player_name(), "You need steel ingots in your inventory to perform this repair.")
                     end
@@ -349,7 +349,7 @@ minetest.register_entity("trike:trike", {
                             fade = 0.0,
                             pitch = 1.0,
                         })
-                        trike.setText(self)
+                        airutils.setText(self,"ultralight trike")
 				    end
 			    end
             end
@@ -380,7 +380,7 @@ minetest.register_entity("trike:trike", {
 
         local touching_ground, liquid_below = trike.check_node_below(self.object)
         local is_on_ground = self.isinliquid or touching_ground or liquid_below
-        local is_under_water = trike.check_is_under_water(self.object)
+        local is_under_water = airutils.check_is_under_water(self.object)
 
         --minetest.chat_send_all('name '.. dump(name) .. ' - pilot: ' .. dump(self.driver_name) .. ' - pax: ' .. dump(passenger_name))
         --=========================

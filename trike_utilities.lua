@@ -16,82 +16,11 @@ function trike.minmax(v,m)
 	return math.min(math.abs(v),m)*trike.sign(v)
 end
 
---lift
-local function pitchroll2pitchyaw(aoa,roll)
-	if roll == 0.0 then return aoa,0 end
-	-- assumed vector x=0,y=0,z=1
-	local p1 = math.tan(aoa)
-	local y = math.cos(roll)*p1
-	local x = math.sqrt(p1^2-y^2)
-	local pitch = math.atan(y)
-	local yaw=math.atan(x)*math.sign(roll)
-	return pitch,yaw
-end
-
-function trike.getLiftAccel(self, velocity, accel, longit_speed, roll, curr_pos)
-    --lift calculations
-    -----------------------------------------------------------
-    local max_height = 2500
-    
-    local retval = accel
-    if longit_speed > 1.0 then
-        local angle_of_attack = math.rad(self._angle_of_attack)
-        local lift = 14
-        --local acc = 0.8
-        local daoa = deg(angle_of_attack)
-
-        --to decrease the lift coefficient at hight altitudes
-        local curr_percent_height = (100 - ((curr_pos.y * 100) / max_height))/100
-
-	    local rotation=self.object:get_rotation()
-	    local vrot = mobkit.dir_to_rot(velocity,rotation)
-	    
-	    local hpitch,hyaw = pitchroll2pitchyaw(angle_of_attack,roll)
-
-	    local hrot = {x=vrot.x+hpitch,y=vrot.y-hyaw,z=roll}
-	    local hdir = mobkit.rot_to_dir(hrot) --(hrot)
-	    local cross = vector.cross(velocity,hdir)
-	    local lift_dir = vector.normalize(vector.cross(cross,hdir))
-
-        local lift_coefficient = (0.24*abs(daoa)*(1/(0.025*daoa+3))^4*math.sign(angle_of_attack))
-        local lift_val = (lift*(vector.length(velocity)^2)*lift_coefficient)*curr_percent_height
-        --minetest.chat_send_all('lift: '.. lift_val)
-
-        local lift_acc = vector.multiply(lift_dir,lift_val)
-        --lift_acc=vector.add(vector.multiply(minetest.yaw_to_dir(rotation.y),acc),lift_acc)
-
-        retval = vector.add(retval,lift_acc)
-    end
-    -----------------------------------------------------------
-    -- end lift
-    return retval
-end
-
-
 function trike.get_gauge_angle(value)
     local angle = value * 18
     angle = angle - 90
     angle = angle * -1
 	return angle
-end
-
---returns 0 for old, 1 for new
-function trike.detect_player_api(player)
-    local player_proterties = player:get_properties()
-    local mesh = "character.b3d"
-    if player_proterties.mesh == mesh then
-        local models = player_api.registered_models
-        local character = models[mesh]
-        if character then
-            if character.animations.sit.eye_height then
-                return 1
-            else
-                return 0
-            end
-        end
-    end
-
-    return 0
 end
 
 -- attach player
@@ -102,7 +31,7 @@ function trike.attach(self, player)
     -- attach the driver
     player:set_attach(self.pilot_seat_base, "", {x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
     local eye_y = -6
-    if trike.detect_player_api(player) == 1 then
+    if airutils.detect_player_api(player) == 1 then
         eye_y = 0.5
     end
     player:set_eye_offset({x = 0, y = eye_y, z = 2}, {x = 0, y = 1, z = -30})
@@ -125,7 +54,7 @@ function trike.attach_pax(self, player)
     -- attach the driver
     player:set_attach(self.passenger_seat_base, "", {x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
     local eye_y = -3
-    if trike.detect_player_api(player) == 1 then
+    if airutils.detect_player_api(player) == 1 then
         eye_y = 3.5
     end
     player:set_eye_offset({x = 0, y = eye_y, z = 3}, {x = 0, y = 3, z = -30})
@@ -142,7 +71,7 @@ end
 
 function trike.dettachPlayer(self, player)
     local name = self.driver_name
-    trike.setText(self)
+    airutils.setText(self,"ultralight trike")
 
     trike.remove_hud(player)
     self._engine_running = false
@@ -279,17 +208,6 @@ function trike.check_node_below(obj)
     return nil, nil
 end
 
-function trike.setText(self)
-    local properties = self.object:get_properties()
-    local formatted = string.format(
-       "%.2f", self.hp_max
-    )
-    if properties then
-        properties.infotext = "Nice ultralight trike of " .. self.owner .. ". Current hp: " .. formatted
-        self.object:set_properties(properties)
-    end
-end
-
 function trike.testImpact(self, velocity)
     local p = self.object:get_pos()
     local collision = false
@@ -338,7 +256,7 @@ function trike.testImpact(self, velocity)
             })
 
             local player_name = self.driver_name
-            trike.setText(self)
+            airutils.setText(self,"ultralight trike")
 
             --minetest.chat_send_all('damage: '.. damage .. ' - hp: ' .. self.hp_max)
             if self.hp_max < 0 then --if acumulated damage is greater than 50, adieu
@@ -386,15 +304,6 @@ function trike.checkattachBug(self)
             self.sound_handle = nil
         end
     end
-end
-
-function trike.check_is_under_water(obj)
-	local pos_up = obj:get_pos()
-	pos_up.y = pos_up.y + 0.1
-	local node_up = minetest.get_node(pos_up).name
-	local nodedef = minetest.registered_nodes[node_up]
-	local liquid_up = nodedef.liquidtype ~= "none"
-	return liquid_up
 end
 
 function trike.flightstep(self)
@@ -503,7 +412,7 @@ function trike.flightstep(self)
     accel.y = accel.y + mobkit.gravity --accel_y
     local new_accel = accel
     if longit_speed > 2 then
-        new_accel = trike.getLiftAccel(self, velocity, new_accel, longit_speed, roll, curr_pos)
+        new_accel = airutils.getLiftAccel(self, velocity, new_accel, longit_speed, roll, curr_pos, 14, 2500)
     end
     self.object:set_acceleration(new_accel)
     -- end lift
