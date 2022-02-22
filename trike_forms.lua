@@ -6,8 +6,11 @@ dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_global_definitions.l
 
 function trike.getPlaneFromPlayer(player)
     local seat = player:get_attach()
-    local plane = seat:get_attach()
-    return plane
+    if seat then
+        local plane = seat:get_attach()
+        return plane
+    end
+    return nil
 end
 
 function trike.pilot_formspec(name)
@@ -26,6 +29,10 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if formname == "trike:pilot_main" then
         local name = player:get_player_name()
         local plane_obj = trike.getPlaneFromPlayer(player)
+        if plane_obj == nil then
+            minetest.close_formspec(name, "trike:pilot_main")
+            return
+        end
         local ent = plane_obj:get_luaentity()
         if fields.hud then
             if ent._show_hud == true then
