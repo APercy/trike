@@ -1,6 +1,4 @@
 trike={}
-trike.fuel = {['biofuel:biofuel'] = 1,['biofuel:bottle_fuel'] = 1,
-            ['biofuel:phial_fuel'] = 0.25, ['biofuel:fuel_can'] = 10}
 trike.gravity = tonumber(minetest.settings:get("movement_gravity")) or 9.8
 
 trike.colors ={
@@ -20,6 +18,8 @@ trike.colors ={
     white='#FFFFFF',
     yellow='#ffe400',
 }
+
+trike.trunk_slots = 3
 
 dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_global_definitions.lua")
 dofile(minetest.get_modpath("trike") .. DIR_DELIM .. "trike_crafts.lua")

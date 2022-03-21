@@ -26,13 +26,14 @@ minetest.register_craftitem("trike:trike", {
         local nodedef = minetest.registered_nodes[node_below]
         if nodedef.liquidtype == "none" then
 			pointed_pos.y=pointed_pos.y+1.5
-			local trike = minetest.add_entity(pointed_pos, "trike:trike")
-			if trike and placer then
-                local ent = trike:get_luaentity()
+			local new_trike = minetest.add_entity(pointed_pos, "trike:trike")
+			if new_trike and placer then
+                local ent = new_trike:get_luaentity()
                 local owner = placer:get_player_name()
                 ent.owner = owner
-				trike:set_yaw(placer:get_look_horizontal())
+				new_trike:set_yaw(placer:get_look_horizontal())
 				itemstack:take_item()
+                airutils.create_inventory(ent, trike.trunk_slots, owner)
 			end
         end
 

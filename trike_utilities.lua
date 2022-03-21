@@ -172,6 +172,7 @@ function trike.destroy(self)
     if self.pilot_seat_base then self.pilot_seat_base:remove() end
     if self.passenger_seat_base then self.passenger_seat_base:remove() end
 
+    airutils.destroy_inventory(self)
     self.object:remove()
 
     pos.y=pos.y+2

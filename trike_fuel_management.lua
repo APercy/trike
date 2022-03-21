@@ -15,7 +15,7 @@ function trike.loadFuel(self, player_name)
     local item_name = ""
     if itmstck then item_name = itmstck:get_name() end
 
-    local fuel = trike.contains(trike.fuel, item_name)
+    local fuel = trike.contains(airutils.fuel, item_name)
     if fuel then
         local stack = ItemStack(item_name .. " 1")
 
