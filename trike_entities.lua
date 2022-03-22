@@ -52,30 +52,6 @@ initial_properties = {
 	
 })
 
-minetest.register_entity('trike:wing',{
-    initial_properties = {
-	    physical = false,
-	    collide_with_objects=true,
-	    pointable=false,
-	    visual = "mesh",
-	    mesh = "trike_wing.b3d",
-        backface_culling = false,
-	    textures = {"trike_black.png", "trike_black.png", "trike_metal.png", "trike_wing_color.png", "trike_wing.png"},
-	},
-    _color="",
-	
-    on_activate = function(self, std)
-	    self.sdata = minetest.deserialize(std) or {}
-	    if self.sdata.remove then self.object:remove() end
-    end,
-	    
-    get_staticdata=function(self)
-      self.sdata.remove=true
-      return minetest.serialize(self.sdata)
-    end,
-
-})
-
 --
 -- fuel
 --
@@ -134,11 +110,30 @@ minetest.register_entity("trike:trike", {
 	    selectionbox = {-2, 0, -2, 2, 1, 2},
 	    visual = "mesh",
 	    mesh = "trike_body.b3d",
+        backface_culling = false,
         stepheight = 0.5,
-        textures = {"trike_black.png", "trike_metal.png", "trike_metal.png", "trike_metal.png",
-                    "trike_metal.png", "trike_metal.png", "trike_painting.png", "trike_black.png",
-                    "trike_white.png", "trike_black.png", "trike_black.png", "trike_black.png",
-                    "trike_grey.png", "trike_panel.png", "trike_black.png", "trike_metal.png", "trike_black.png"},
+        textures = {
+                        "trike_black.png", --bancos
+                        "trike_metal.png", --freios
+                        "trike_metal.png", --montante trem
+                        "trike_metal.png", --haste trem
+                        "trike_metal.png", --suporte asa
+                        "trike_metal.png", --haste trem
+                        "trike_painting.png", --pintura
+                        "trike_grey.png", --motor
+                        "trike_white.png", --tanque
+                        "trike_black.png", --tampa do tanque
+                        "trike_black.png", --carburador
+                        "trike_black.png", --escape
+                        "trike_grey.png", --interior
+                        "trike_metal.png", --estrutura asa
+                        "trike_black.png", -- cabos
+                        "trike_wing.png", --bordo de fuga
+                        "trike_painting.png", --bordo de ataque
+                        "trike_panel.png", --painel
+                        "trike_black.png", --pneus
+                        "trike_metal.png", --rodas
+                    }
     },
     textures = {},
 	driver_name = nil,
@@ -208,10 +203,6 @@ minetest.register_entity("trike:trike", {
         engine:set_animation({x = 1, y = 12}, 0, 0, true)
 	    self.engine = engine
 
-	    local wing=minetest.add_entity(pos,'trike:wing')
-	    wing:set_attach(self.object,'',{x=0,y=29,z=0},{x=0,y=0,z=0})
-	    self.wing = wing
-
 	    local wheel=minetest.add_entity(pos,'trike:front_wheel')
 	    wheel:set_attach(self.object,'',{x=0,y=0,z=0},{x=0,y=0,z=0})
 		-- set the animation once and later only change the speed
@@ -241,8 +232,7 @@ minetest.register_entity("trike:trike", {
         passenger_seat_base:set_attach(self.object,'',{x=0,y=9,z=1.6},{x=0,y=0,z=0})
 	    self.passenger_seat_base = passenger_seat_base
 
-        trike.paint(self, self.object, self._color, "trike_painting.png")
-        trike.paint(self, self.wing, self._color, "trike_wing_color.png")
+        airutils.paint(self, self._color, "trike_painting.png")
 
 		self.object:set_armor_groups({immortal=1})
 
@@ -337,22 +327,8 @@ minetest.register_entity("trike:trike", {
 
             -- deal with painting or destroying
 		    if itmstck then
-			    local _,indx = item_name:find('dye:')
-			    if indx then
-
-                    --lets paint!!!!
-				    local color = item_name:sub(indx+1)
-				    local colstr = trike.colors[color]
-                    --minetest.chat_send_all(color ..' '.. dump(colstr))
-				    if colstr then
-                        trike.paint(self, self.object, colstr, "trike_painting.png")
-                        trike.paint(self, self.wing, colstr, "trike_wing_color.png")
-					    itmstck:set_count(itmstck:get_count()-1)
-					    puncher:set_wielded_item(itmstck)
-				    end
-                    -- end painting
-
-			    else -- deal damage
+			    if airutils.set_paint(self, puncher, itmstck, "trike_painting.png") == false then
+			        -- deal damage
 				    if not self.driver and toolcaps and toolcaps.damage_groups and
                             toolcaps.damage_groups.fleshy and item_name ~= airutils.fuel then
 					    --mobkit.hurt(self,toolcaps.damage_groups.fleshy - 1)

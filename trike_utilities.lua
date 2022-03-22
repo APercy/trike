@@ -125,22 +125,6 @@ function trike.checkAttach(self, player)
     return false
 end
 
---painting
-function trike.paint(self, object, colstr, search_string)
-    if colstr then
-        self._color = colstr
-        local entity = object:get_luaentity()
-        local l_textures = entity.initial_properties.textures
-        for _, texture in ipairs(l_textures) do
-            local indx = texture:find(search_string)
-            if indx then
-                l_textures[_] = search_string .."^[multiply:".. colstr
-            end
-        end
-        object:set_properties({textures=l_textures})
-    end
-end
-
 -- destroy the boat
 function trike.destroy(self)
     if self.sound_handle then
@@ -167,7 +151,6 @@ function trike.destroy(self)
     if self.power_gauge then self.power_gauge:remove() end
     if self.climb_gauge then self.climb_gauge:remove() end
     if self.engine then self.engine:remove() end
-    if self.wing then self.wing:remove() end
     if self.wheel then self.wheel:remove() end
     if self.pilot_seat_base then self.pilot_seat_base:remove() end
     if self.passenger_seat_base then self.passenger_seat_base:remove() end
@@ -399,7 +382,7 @@ function trike.flightstep(self)
     end
     
     --adjust wing pitch (3d model)
-    self.wing:set_attach(self.object,'',{x=0,y=29,z=0},{x=-self._angle_of_attack,y=0,z=0})
+    self.object:set_bone_position("wing", {x=0,y=29,z=0}, {x=-self._angle_of_attack,y=0,z=0})
 
     local indicated_speed = longit_speed
     if indicated_speed < 0 then indicated_speed = 0 end
