@@ -362,6 +362,7 @@ function trike.flightstep(self)
     -- adjust pitch by velocity
     if is_flying == false then --isn't flying?
         if newpitch < 0 then newpitch = 0 end
+        newroll = 0
 
         local min_speed = 4
         if longit_speed < min_speed then
