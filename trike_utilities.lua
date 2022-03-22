@@ -381,9 +381,6 @@ function trike.flightstep(self)
         self.wheel:set_animation_frame_speed(0)
     end
     
-    --adjust wing pitch (3d model)
-    self.object:set_bone_position("wing", {x=0,y=29,z=0}, {x=-self._angle_of_attack,y=0,z=0})
-
     local indicated_speed = longit_speed
     if indicated_speed < 0 then indicated_speed = 0 end
     local speed_angle = trike.get_gauge_angle(indicated_speed, -45)
@@ -400,6 +397,9 @@ function trike.flightstep(self)
     end
     self.object:set_acceleration(new_accel)
     -- end lift
+
+    --adjust wing pitch (3d model)
+    self.object:set_bone_position("wing", {x=0,y=29,z=0}, {x=-self._angle_of_attack,y=0,z=(self._rudder_angle/3)})
 
 	if newyaw~=yaw or newpitch~=pitch or newroll~=roll then
         self.object:set_rotation({x=newpitch,y=newyaw,z=newroll})
