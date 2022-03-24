@@ -6,9 +6,8 @@ function trike.physics(self)
 		-- dumb friction
 	if self.isonground and not self.isinliquid then
         --minetest.chat_send_all('okay')
-		self.object:set_velocity({x=vel.x*friction,
-								y=vel.y,
-								z=vel.z*friction})
+        vel = {x=vel.x*friction, y=vel.y, z=vel.z*friction}
+		self.object:set_velocity(vel)
 	end
 	
 	-- bounciness
