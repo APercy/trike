@@ -396,6 +396,7 @@ function trike.flightstep(self)
     if longit_speed > 2 then
         new_accel = airutils.getLiftAccel(self, velocity, new_accel, longit_speed, roll, curr_pos, 14, 2500)
     end
+    self.object:set_acceleration(self.object:get_acceleration())
     self.object:set_acceleration(new_accel)
     -- end lift
 
