@@ -325,6 +325,10 @@ function trike.flightstep(self)
 
     local is_attached = trike.checkAttach(self, player)
 
+    if longit_speed == 0 and is_flying == false and is_attached == false and self._engine_running == false then
+        return
+    end
+
 	if is_attached then
         --control
 		accel, stop = trike.control(self, self.dtime, hull_direction,
