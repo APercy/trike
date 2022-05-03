@@ -325,6 +325,11 @@ function trike.flightstep(self)
 
     local is_attached = trike.checkAttach(self, player)
 
+	if not is_attached then
+        -- for some engine error the player can be detached from the machine, so lets set him attached again
+        trike.checkattachBug(self)
+    end
+
     if longit_speed == 0 and is_flying == false and is_attached == false and self._engine_running == false then
         return
     end
@@ -333,9 +338,6 @@ function trike.flightstep(self)
         --control
 		accel, stop = trike.control(self, self.dtime, hull_direction,
             longit_speed, longit_drag, later_speed, later_drag, accel, player, is_flying)
-    else
-        -- for some engine error the player can be detached from the machine, so lets set him attached again
-        trike.checkattachBug(self)
 	end
     trike.testImpact(self, velocity)
 
