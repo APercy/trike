@@ -391,6 +391,8 @@ function trike.flightstep(self)
         new_accel = airutils.getLiftAccel(self, velocity, new_accel, longit_speed, roll, curr_pos, 14, 2500)
     end
 
+    if self.isinliquid then self._engine_running = false end
+
     --[[if player then
         trike.attach(self, player)
     end]]--
