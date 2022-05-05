@@ -209,7 +209,9 @@ function trike.testImpact(self, velocity)
     local impact = abs(trike.get_hipotenuse_value(velocity, self.lastvelocity))
     if impact > 2 then
         --minetest.chat_send_all('impact: '.. impact .. ' - hp: ' .. self.hp_max)
-		collision = self.colinfo.collides
+        if self.colinfo then
+            collision = self.colinfo.collides
+        end
     end
 
     if collision then
