@@ -311,7 +311,9 @@ function trike.flightstep(self)
 
     local node_bellow = mobkit.nodeatpos(mobkit.pos_shift(curr_pos,{y=-1}))
     local is_flying = true
-    if node_bellow and node_bellow.drawtype ~= 'airlike' then is_flying = false end
+    if self.colinfo then
+        is_flying = not self.colinfo.touching_ground
+    end
 
     local is_attached = trike.checkAttach(self, player)
 
@@ -403,6 +405,14 @@ function trike.flightstep(self)
 
     --adjust wing pitch (3d model)
     self.object:set_bone_position("wing", {x=0,y=29,z=0}, {x=-self._angle_of_attack,y=0,z=(self._rudder_angle/3)})
+
+    if is_flying == false then
+        -- new yaw
+        local turn_rate = math.rad(30)
+        local yaw_turn = self.dtime * math.rad(self._rudder_angle) * turn_rate *
+                    trike.sign(longit_speed) * math.abs(longit_speed/2)
+	    newyaw = yaw + yaw_turn
+    end
 
 	if newyaw~=yaw or newpitch~=pitch or newroll~=roll then
         self.object:set_rotation({x=newpitch,y=newyaw,z=newroll})
