@@ -198,7 +198,7 @@ function trike.testImpact(self, velocity)
     if self.lastvelocity == nil then return end
     --lets calculate the vertical speed, to avoid the bug on colliding on floor with hard lag
     if abs(velocity.y - self.lastvelocity.y) > 2 then
-		local noded = mobkit.nodeatpos(mobkit.pos_shift(p,{y=-1}))
+		local noded = airutils.nodeatpos(airutils.pos_shift(p,{y=-1}))
 	    if (noded and noded.drawtype ~= 'airlike') then
 		    collision = true
 	    else
@@ -290,7 +290,7 @@ function trike.flightstep(self)
 
     local velocity = self.object:get_velocity()
     --self.object:set_velocity(velocity) --hack to avoid glitches
-    local hull_direction = mobkit.rot_to_dir(rotation) --minetest.yaw_to_dir(yaw)
+    local hull_direction = airutils.rot_to_dir(rotation) --minetest.yaw_to_dir(yaw)
     local nhdir = {x=hull_direction.z,y=0,z=-hull_direction.x}		-- lateral unit vector
 
     local longit_speed = vector.dot(velocity,hull_direction)
@@ -309,7 +309,7 @@ function trike.flightstep(self)
     local curr_pos = self.object:get_pos()
     self.object:move_to(curr_pos)
 
-    local node_bellow = mobkit.nodeatpos(mobkit.pos_shift(curr_pos,{y=-1}))
+    local node_bellow = airutils.nodeatpos(airutils.pos_shift(curr_pos,{y=-1}))
     local is_flying = true
     if self.colinfo then
         is_flying = not self.colinfo.touching_ground
@@ -389,7 +389,7 @@ function trike.flightstep(self)
     self.power_gauge:set_attach(self.object,'',TRIKE_GAUGE_POWER_POSITION,{x=0,y=0,z=power_indicator_angle})
 
     --lift calculation
-    accel.y = accel.y + mobkit.gravity --accel_y
+    accel.y = accel.y + airutils.gravity --accel_y
     local new_accel = accel
     if longit_speed > 2 then
         new_accel = airutils.getLiftAccel(self, velocity, new_accel, longit_speed, roll, curr_pos, 14, 2500)
