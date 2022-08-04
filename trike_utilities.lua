@@ -216,13 +216,27 @@ function trike.testImpact(self, velocity)
         end
     end
 
+    if impact > 0.5  and self._longit_speed > 2 then
+        local noded = airutils.nodeatpos(airutils.pos_shift(p,{y=-0.1}))
+	    if (noded and noded.drawtype ~= 'airlike') then
+            minetest.sound_play("trike_touch", {
+                --to_player = self.driver_name,
+                object = self.object,
+                max_hear_distance = 15,
+                gain = 1.0,
+                fade = 0.0,
+                pitch = 1.0,
+            }, true)
+	    end
+    end
+
     if collision then
         --self.object:set_velocity({x=0,y=0,z=0})
         local damage = impact / 2
         self.hp_max = self.hp_max - damage --subtract the impact value directly to hp meter
 
         if self.driver_name then
-            minetest.sound_play("collision", {
+            minetest.sound_play("trike_collision", {
                 to_player = self.driver_name,
                 --pos = curr_pos,
                 --max_hear_distance = 5,
@@ -399,10 +413,12 @@ function trike.flightstep(self)
 
     if self.isinliquid then self._engine_running = false end
 
-    --[[if player then
-        trike.attach(self, player)
-    end]]--
-    self.object:set_acceleration(new_accel)
+    --added accell check to avoid mercurio server problem
+    if new_accel then
+        if new_accel.x ~= nil and new_accel.y ~= nil and new_accel.z ~= nil then
+            self.object:set_acceleration(new_accel)
+        end
+    end
     -- end lift
 
     --adjust wing pitch (3d model)

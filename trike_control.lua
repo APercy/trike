@@ -46,7 +46,7 @@ function trike.control(self, dtime, hull_direction, longit_speed,
 		    elseif self._engine_running == false and self._energy > 0 then
 			    self._engine_running = true
 	            -- sound and animation
-                self.sound_handle = minetest.sound_play({name = "engine"},
+                self.sound_handle = minetest.sound_play({name = "trike_engine"},
 	                {object = self.object, gain = 2.0,
                         pitch = 0.5 + ((self._power_lever/100)/2),max_hear_distance = 32,
                         loop = true,})
@@ -75,7 +75,7 @@ function trike.control(self, dtime, hull_direction, longit_speed,
                     --sound
                     if self.sound_handle then
                         minetest.sound_stop(self.sound_handle)
-                        self.sound_handle = minetest.sound_play({name = "engine"},
+                        self.sound_handle = minetest.sound_play({name = "trike_engine"},
 	                        {object = self.object, gain = 2.0,
                                 pitch = 0.5 + ((self._power_lever/100)/2),max_hear_distance = 32,
                                 loop = true,})
@@ -104,7 +104,7 @@ function trike.control(self, dtime, hull_direction, longit_speed,
                 else
                     --sound
                     minetest.sound_stop(self.sound_handle)
-                    self.sound_handle = minetest.sound_play({name = "engine"},
+                    self.sound_handle = minetest.sound_play({name = "trike_engine"},
 		                {object = self.object, gain = 2.0,
                             pitch = 0.5 + ((self._power_lever/100)/2),
                             max_hear_distance = 32, loop = true,})

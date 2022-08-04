@@ -334,7 +334,7 @@ minetest.register_entity("trike:trike", {
 					    --airutils.hurt(self,toolcaps.damage_groups.fleshy - 1)
 					    --airutils.make_sound(self,'hit')
                         self.hp_max = self.hp_max - 10
-                        minetest.sound_play("collision", {
+                        minetest.sound_play("trike_collision", {
 	                        object = self.object,
 	                        max_hear_distance = 5,
 	                        gain = 1.0,
