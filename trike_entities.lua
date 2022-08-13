@@ -163,6 +163,10 @@ minetest.register_entity("trike:trike", {
     _inv = nil,
     _inv_id = "",
 
+    _change_color = function(self, colstr)
+        airutils.paint(self, colstr, "trike_painting.png")
+    end,
+
     get_staticdata = function(self) -- unloaded/unloads ... is now saved
         return minetest.serialize({
             stored_energy = self._energy,
