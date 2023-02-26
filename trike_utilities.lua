@@ -423,7 +423,7 @@ function trike.flightstep(self)
 
     --wind effects
     if longit_speed > 1.5 then
-        local wind = airutils.get_wind(curr_pos, 0.2)
+        local wind = airutils.get_wind(curr_pos, 0.1)
         new_accel = vector.add(new_accel, wind)
     end
 
