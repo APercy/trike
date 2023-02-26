@@ -421,6 +421,12 @@ function trike.flightstep(self)
     end
     -- end lift
 
+    --wind effects
+    if longit_speed > 1.5 then
+        local wind = airutils.get_wind(curr_pos, 0.2)
+        new_accel = vector.add(new_accel, wind)
+    end
+
     --adjust wing pitch (3d model)
     self.object:set_bone_position("wing", {x=0,y=29,z=0}, {x=-self._angle_of_attack,y=0,z=(self._rudder_angle/3)})
 
