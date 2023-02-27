@@ -408,7 +408,8 @@ function trike.flightstep(self)
     accel.y = accel.y + airutils.gravity --accel_y
     local new_accel = accel
     if longit_speed > 2 then
-        new_accel = airutils.getLiftAccel(self, velocity, new_accel, longit_speed, roll, curr_pos, 14, 2500)
+        local lift = 10
+        new_accel = airutils.getLiftAccel(self, velocity, new_accel, longit_speed, roll, curr_pos, lift, 2500)
     end
 
     if self.isinliquid then self._engine_running = false end
