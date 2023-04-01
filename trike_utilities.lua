@@ -298,7 +298,7 @@ end
 
 function trike.flightstep(self)
     local accel_y = self.object:get_acceleration().y
-    local rotation = self.object:get_rotation()
+    local rotation = airutils.normalize_rotations(self.object:get_rotation())
     local yaw = rotation.y
 	local newyaw=yaw
     local pitch = rotation.x
