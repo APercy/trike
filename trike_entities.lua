@@ -281,6 +281,10 @@ minetest.register_entity("trike:trike", {
     logic = trike.flightstep,
 
 	on_punch = function(self, puncher, ttime, toolcaps, dir, damage)
+        if self.hp_max <= 0 then
+            trike.destroy(self)
+        end
+
 		if not puncher or not puncher:is_player() then
 			return
 		end
