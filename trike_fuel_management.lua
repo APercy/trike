@@ -17,10 +17,9 @@ function trike.loadFuel(self, player_name)
 
     local fuel = trike.contains(airutils.fuel, item_name)
     if fuel then
-        local stack = ItemStack(item_name .. " 1")
-
         if self._energy < 10 then
-            inv:remove_item("main", stack)
+            itmstck:set_count(1)
+            inv:remove_item("main", itmstck)
             self._energy = self._energy + fuel
             if self._energy > 10 then self._energy = 10 end
 
