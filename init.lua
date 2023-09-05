@@ -212,7 +212,7 @@ local function fetch_setting(name)
     return settings and settings:get(sname) or minetest.settings:get(sname)
 end
 
-local old_entities = {"trike:seat_base","trike:engine"}
+local old_entities = {"trike:seat_base","trike:engine","trike:front_wheel"}
 for _,entity_name in ipairs(old_entities) do
     minetest.register_entity(":"..entity_name, {
         on_activate = function(self, staticdata)
