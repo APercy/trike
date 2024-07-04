@@ -163,7 +163,7 @@ trike.plane_properties = {
     _rudder_limit = 30.0,
     _elevator_limit = 40.0,
     _elevator_response_attenuation = 10,
-    _pitch_intensity = 0.8,
+    _pitch_intensity = 0.6,
     _yaw_intensity = 40,
     _yaw_turn_rate = 12,
     _elevator_pos = {x=0, y=0, z=0},
