@@ -22,24 +22,32 @@ function trike.register_parts_method(self)
     local pos = self.object:get_pos()
 
     local wheels=minetest.add_entity(pos,'trike:wheels')
-    wheels:set_attach(self.object,'',{x=0,y=0,z=0},{x=0,y=0,z=0})
-    self.wheels = wheels
+    if wheels then
+        wheels:set_attach(self.object,'',{x=0,y=0,z=0},{x=0,y=0,z=0})
+        self.wheels = wheels
+    end
 
     local fuel_gauge=minetest.add_entity(pos,'trike:pointer')
-    local fuel_percentage = (self._energy*100)/self._max_fuel
-    local fuel_angle = -(fuel_percentage*180)/100
-    fuel_gauge:set_attach(self.object,'',TRIKE_GAUGE_FUEL_POSITION,{x=0,y=0,z=fuel_angle+90})
-    self.fuel_pointer = fuel_gauge
+    if fuel_gauge then
+        local fuel_percentage = (self._energy*100)/self._max_fuel
+        local fuel_angle = -(fuel_percentage*180)/100
+        fuel_gauge:set_attach(self.object,'',TRIKE_GAUGE_FUEL_POSITION,{x=0,y=0,z=fuel_angle+90})
+        self.fuel_pointer = fuel_gauge
+    end
 
     local power_gauge=minetest.add_entity(pos,'trike:pointer')
     local power_indicator_angle = airutils.get_gauge_angle(self._power_lever/10)
-    power_gauge:set_attach(self.object,'',TRIKE_GAUGE_POWER_POSITION,{x=0,y=0,z=power_indicator_angle})
-    self.power_pointer = power_gauge
+    if power_gauge then
+        power_gauge:set_attach(self.object,'',TRIKE_GAUGE_POWER_POSITION,{x=0,y=0,z=power_indicator_angle})
+        self.power_pointer = power_gauge
+    end
 
     local climb_gauge=minetest.add_entity(pos,'trike:pointer')
-    local climb_angle = airutils.get_gauge_angle(0)
-    climb_gauge:set_attach(self.object,'',TRIKE_GAUGE_CLIMBER_POSITION,{x=0,y=0,z=climb_angle})
-    self.climb_pointer = climb_gauge
+    if climb_gauge then
+        local climb_angle = airutils.get_gauge_angle(0)
+        climb_gauge:set_attach(self.object,'',TRIKE_GAUGE_CLIMBER_POSITION,{x=0,y=0,z=climb_angle})
+        self.climb_pointer = climb_gauge
+    end
 end
 
 function trike.destroy_parts_method(self)
@@ -73,13 +81,19 @@ function trike.step_additional_function(self)
 
     local fuel_percentage = (self._energy*100)/self._max_fuel
     local fuel_angle = -(fuel_percentage*180)/100
-    self.fuel_pointer:set_attach(self.object,'',TRIKE_GAUGE_FUEL_POSITION,{x=0,y=0,z=fuel_angle+90})
+    if self.fuel_pointer then
+        self.fuel_pointer:set_attach(self.object,'',TRIKE_GAUGE_FUEL_POSITION,{x=0,y=0,z=fuel_angle+90})
+    end
 
     local power_indicator_angle = airutils.get_gauge_angle(self._power_lever/10)
-    self.power_pointer:set_attach(self.object,'',TRIKE_GAUGE_POWER_POSITION,{x=0,y=0,z=power_indicator_angle})
+    if self.power_pointer then
+        self.power_pointer:set_attach(self.object,'',TRIKE_GAUGE_POWER_POSITION,{x=0,y=0,z=power_indicator_angle})
+    end
 
     local climb_angle = airutils.get_gauge_angle(self._climb_rate)
-    self.climb_pointer:set_attach(self.object,'',TRIKE_GAUGE_CLIMBER_POSITION,{x=0,y=0,z=climb_angle})
+    if self.climb_pointer then
+        self.climb_pointer:set_attach(self.object,'',TRIKE_GAUGE_CLIMBER_POSITION,{x=0,y=0,z=climb_angle})
+    end
 end
 
 trike.plane_properties = {
